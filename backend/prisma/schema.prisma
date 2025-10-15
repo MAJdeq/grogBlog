@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id           String         @id @default(uuid()) // UUID primary key
+  email        String         @unique               // login email
+  name         String?                        // optional name
+  password     String                         // hashed password
+  refreshTokens RefreshToken[]                 // relation to multiple refresh tokens
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   // hashed refresh token
+  admin     Admin    @relation(fields: [adminId], references: [id])
+  adminId   String
+  expiresAt DateTime // optional expiry
+  createdAt DateTime @default(now())
+}
