@@ -1,15 +1,23 @@
 import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import authRoutes from "./routes/authRoutes";
 
 const app = express();
-const cors = require("cors");
-const port = 5000; // Or any preferred port
+const port = 5000;
 
-app.use(express.json()); // Enable JSON body parsing
-app.use(cors());
+app.use(express.json());
+app.use(cookieParser());
 
-app.get("/", (req, res) => {
-  res.send("Hello from Express shit Backend!");
-});
+// ✅ Configure CORS for cookies
+app.use(
+  cors({
+    origin: "http://localhost:5173", // your frontend URL
+    credentials: true, // allow sending/receiving cookies
+  })
+);
+
+app.use("/auth", authRoutes);
 
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);

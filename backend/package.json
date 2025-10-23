@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc --build",
-    "dev": "nodemon --exec ts-node src/index.ts"
+    "dev": "nodemon --exec ts-node src/index.ts",
+    "seed_admin": "ts-node prisma/scripts/createAdmin.ts"
   },
   "keywords": [],
   "author": "",
@@ -14,12 +15,15 @@
   "type": "commonjs",
   "dependencies": {
     "@prisma/client": "^6.17.1",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   },
   "devDependencies": {
+    "@types/cookie-parser": "^1.4.9",
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/node": "^24.7.2",
     "nodemon": "^3.1.10",
