@@ -77,9 +77,9 @@ export const NavLayout = () => {
         <div className="flex flex-initial items-center justify-between">
           <h1 className="text-3xl font-bold">GrogBlog</h1>
           <div className="flex">
-            <nav className="hidden sm:block">
+            <nav className="hidden sm:flex items-center space-x-4">
               <NavigationMenu>
-                <NavigationMenuList>
+                <NavigationMenuList className="flex space-x-4">
                   {links.map((link, index) => (
                     <NavigationMenuItem key={index}>
                       <NavigationMenuLink asChild>
@@ -89,8 +89,11 @@ export const NavLayout = () => {
                   ))}
                 </NavigationMenuList>
               </NavigationMenu>
+
+              {/* Logout button inline with links */}
               {authorized && <Button onClick={handleLogout}>Logout</Button>}
             </nav>
+
             <div className="block md:hidden">
               <DropdownMenu>
                 <DropdownMenuTrigger>
@@ -106,6 +109,21 @@ export const NavLayout = () => {
           </div>
         </div>
         <Outlet />
+        <footer className="bg-gray-900 text-white py-6 mt-10">
+          <div className="max-w-5xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
+            <span className="text-sm">
+              &copy; {new Date().getFullYear()} GrogBlog. All rights reserved.
+            </span>
+            <div className="flex space-x-4 mt-2 md:mt-0">
+              <a href="/about" className="hover:underline">
+                About
+              </a>
+              <a href="/contact" className="hover:underline">
+                Contact
+              </a>
+            </div>
+          </div>
+        </footer>
       </div>
     </>
   );

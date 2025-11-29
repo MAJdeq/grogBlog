@@ -1,6 +1,5 @@
 import { prisma } from "../lib/db";
 import bcrypt from "bcrypt";
-import { Response } from "express";
 import jwt from "jsonwebtoken";
 
 export const signIn = async (email: string, password: string) => {
