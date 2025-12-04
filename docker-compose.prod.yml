@@ -7,7 +7,7 @@ services:
     container_name: frontend
     restart: always
     ports:
-      - "80:80"
+      - "5000:5000"
 
   # backend:
   #   build:
