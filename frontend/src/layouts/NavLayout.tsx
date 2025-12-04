@@ -15,10 +15,11 @@ import { Outlet } from "react-router-dom";
 import { useEffect } from "react";
 import { useAdminStore } from "../stores/AuthStore";
 import { Button } from "../components/ui/button";
+import { Link } from "react-router-dom";
 export const NavLayout = () => {
   const links = [
     {
-      path: "home",
+      path: "/",
       name: "Home",
     },
     {
@@ -83,7 +84,7 @@ export const NavLayout = () => {
                   {links.map((link, index) => (
                     <NavigationMenuItem key={index}>
                       <NavigationMenuLink asChild>
-                        <a href={`/${link.path}`}>{link.name}</a>
+                        <Link to={link.path}>{link.name}</Link>
                       </NavigationMenuLink>
                     </NavigationMenuItem>
                   ))}
@@ -100,8 +101,12 @@ export const NavLayout = () => {
                   <Menu />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  {links.map((link) => (
-                    <DropdownMenuItem>{link.name}</DropdownMenuItem>
+                  {links.map((link, index) => (
+                    <DropdownMenuItem key={index}>
+                      <Link to={link.path} className="block w-full">
+                        {link.name}
+                      </Link>
+                    </DropdownMenuItem>
                   ))}
                 </DropdownMenuContent>
               </DropdownMenu>
