@@ -10,21 +10,21 @@ services:
       - ./backend/.env
     depends_on:
       - db
-    ports:
-      - "3000:3000"
-
+    expose:
+      - "3000"
+    
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        VITE_API_URL: "http://grogblog.xyz:3000"
+        VITE_API_URL: "https://api.grogblog.xyz"
     image: majdeq/grog_blog-frontend:latest
     container_name: frontend
     restart: always
-    ports:
-      - "80:5000"
-
+    expose:
+      - "5000"
+    
   db:
     image: postgres:16
     container_name: db
@@ -37,3 +37,23 @@ services:
       - ./db-data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+      
+  caddy:
+    image: caddy:latest
+    container_name: caddy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"  # For HTTP/3
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - frontend
+      - backend
+      
+volumes:
+  caddy_data:
+  caddy_config:

@@ -1,0 +1,7 @@
+grogblog.xyz {
+    reverse_proxy frontend:5000
+}
+
+api.grogblog.xyz {
+    reverse_proxy backend:3000
+}
