@@ -28,11 +28,12 @@ export const NavLayout = () => {
     },
   ];
   const { authorized, setAuthorized } = useAdminStore();
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch("http://localhost:5000/auth/me", {
+        const response = await fetch(`${apiUrl}/auth/me`, {
           headers: { "Content-Type": "application/json" },
           credentials: "include",
         });
@@ -56,7 +57,7 @@ export const NavLayout = () => {
   }, [setAuthorized]);
 
   const handleLogout = async () => {
-    const response = await fetch("http://localhost:5000/auth/sign_out", {
+    const response = await fetch(`${apiUrl}/auth/sign_out`, {
       headers: {
         "Content-type": "application/json",
       },
