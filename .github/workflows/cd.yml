@@ -27,8 +27,7 @@ jobs:
           docker compose -f docker-compose.prod.yml build
           docker push majdeq/grog_blog-frontend:latest
           docker push majdeq/grog_blog-backend:latest
-          
-          
+   
 
       - name: Deploy to Droplet
         uses: appleboy/ssh-action@master
@@ -42,7 +41,18 @@ jobs:
 
             cd /var/www/grogBlog
 
+            # ---------------------------
+            # CLEAN UP OLD DOCKER ARTIFACTS
+            # ---------------------------
+            echo "Cleaning up old Docker images, containers, volumes..."
+            docker system prune -af || true
+            docker volume prune -f || true
+
+            # ---------------------------
+            # PULL AND START NEW IMAGES
+            # ---------------------------
             git pull origin main
 
             docker compose -f docker-compose.prod.yml pull
             docker compose -f docker-compose.prod.yml up -d --remove-orphans
+
