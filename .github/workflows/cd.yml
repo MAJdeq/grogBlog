@@ -60,7 +60,7 @@ jobs:
             export DOCKER_BUILDKIT=1
             export COMPOSE_DOCKER_CLI_BUILD=1
 
-            cd /var/www/sitehaus
+            cd /var/www/grogBlog
 
             git pull origin main
 
