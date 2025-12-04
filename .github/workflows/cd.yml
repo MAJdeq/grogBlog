@@ -38,13 +38,10 @@ jobs:
           npm install
           cd ..
 
-      - name: Build Frontend Docker Image
+      - name: Build Frontend
         run: |
-          docker build \
-            --build-arg VITE_API_URL=${{ secrets.VITE_API_URL }} \
-            -t majdeq/grog_blog-frontend:latest ./frontend
-
-
+          cd frontend
+          npm run build
       
       - name: Build Backend
         run: |
