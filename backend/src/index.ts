@@ -2,21 +2,15 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import authRoutes from "./routes/authRoutes";
+import path from "path";
 
 const app = express();
 const port = 5000;
+const FRONTEND_URL = process.env.FRONTEND_URL;
 
+app.use(cors({ origin: FRONTEND_URL, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
-
-// ✅ Configure CORS for cookies
-app.use(
-  cors({
-    origin: "http://localhost:5173", // your frontend URL
-    credentials: true, // allow sending/receiving cookies
-  })
-);
-
 app.use("/auth", authRoutes);
 
 app.listen(port, () => {

@@ -1,39 +1,36 @@
 # ===========================
-# 1. Builder Stage
+# Builder Stage
 # ===========================
 FROM node:22-alpine AS builder
-
 WORKDIR /app
 
-# Install dependencies
+# Install all dependencies
 COPY package*.json ./
 RUN npm ci
 
-# Copy everything, including prisma
+# Copy source
 COPY . .
 
-# Generate prisma client
+# Generate Prisma client
 RUN npx prisma generate
 
-# Build TypeScript → JavaScript (this creates /app/build)
+# Build TypeScript → JS
 RUN npm run build
 
-
 # ===========================
-# 2. Production Stage
+# Production Stage
 # ===========================
 FROM node:22-alpine
-
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm ci
-
-# Copy prisma schema (needed at runtime)
-COPY prisma ./prisma
-
-# Copy compiled JavaScript (from /app/build)
+# Copy build, node_modules, and prisma client
 COPY --from=builder /app/build ./build
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/prisma ./prisma
+COPY package*.json ./
 
-# Start app using compiled JS
+# Expose backend port
+EXPOSE 5000
+
+# Start the server
 CMD ["node", "build/index.js"]

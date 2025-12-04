@@ -10,10 +10,11 @@ import { AdminForm } from "./forms/AdminForm.tsx";
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: "/",          // root path
     element: <NavLayout />,
     children: [
       {
+        path: "/",      // nested layout path
         element: <DashLayout />,
         children: [
           { path: "home", element: <HomePage /> },
@@ -27,6 +28,7 @@ const router = createBrowserRouter([
     element: <AdminForm />,
   },
 ]);
+
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

@@ -1,10 +1,24 @@
+# Build Stage
 FROM node:22-alpine AS builder
 WORKDIR /app
+
 COPY package*.json ./
 RUN npm install
 COPY . .
 RUN npm run build
 
-FROM nginx:1.29.3
-COPY --from=builder /app/dist /usr/share/nginx/html
-EXPOSE 80
+# Production Stage
+FROM node:22-alpine
+WORKDIR /app
+
+# Install serve
+RUN npm install -g serve
+
+# Copy build output
+COPY --from=builder /app/dist ./dist
+
+# Expose port
+EXPOSE 5000
+
+# Run serve
+CMD ["serve", "-s", "dist", "-l", "5000"]
