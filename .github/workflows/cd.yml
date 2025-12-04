@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+  concurrency:
+    group: cd-${{ github.ref }}
+    cancel-in-progress: true
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -12,45 +16,52 @@ jobs:
       DOCKER_BUILDKIT: 1
       COMPOSE_DOCKER_CLI_BUILD: 1
 
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Setup npm
+        uses: actions/setup-node@v4
+        node-version: 22
 
-      - name: Build and push all images
+      - name: Install Frontend Dependencies
         run: |
-          # Build all services using BuildKit
-          docker compose -f docker-compose.prod.yml build --pull
+          cd frontend
+          npm install
+          cd ..
+      
+      - name: Install Backend Dependencies
+        run: |
+          cd backend
+          npm install
+          cd ..
 
-          # Push all images defined in docker-compose.prod.yml
-          docker compose -f docker-compose.prod.yml push
-
+      - name: Build Frontend
+        run: |
+          cd frontend
+          npm run build
+      
+      - name: Build Backend
+        run: |
+          cd backend
+          npm run build
+        
       - name: Deploy to Droplet
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.DROPLET_IP }}
           username: deploy
           key: ${{ secrets.DROPLET_SSH_KEY }}
-          passphrase: ${{ secrets.DROPLET_PASSPHRASE }}
           script: |
             set -euo pipefail
 
-            cd /var/www/grogBlog
+            export DOCKER_BUILDKIT=1
+            export COMPOSE_DOCKER_CLI_BUILD=1
 
-            echo "Stopping and removing old containers..."
-            docker compose -f docker-compose.prod.yml down || true
+            cd /var/www/sitehaus
 
-            echo "Cleaning up dangling images and volumes..."
-            docker image prune -f || true
-            docker volume prune -f || true
+            git pull origin main
 
-            echo "Pulling latest images from Docker Hub..."
-            docker compose -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.prod.yml up -d --build --remove-orphans
 
-            echo "Starting containers..."
-            docker compose -f docker-compose.prod.yml up -d
