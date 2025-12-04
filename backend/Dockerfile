@@ -23,6 +23,8 @@ COPY --from=builder /app/node_modules ./node_modules
 # Copy build output
 COPY --from=builder /app/build ./build
 
+COPY --from=builder /app/src ./src
+
 # Copy Prisma schema & migrations
 COPY --from=builder /app/prisma ./prisma
 
