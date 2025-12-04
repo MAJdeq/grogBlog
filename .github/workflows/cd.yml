@@ -26,6 +26,9 @@ jobs:
         run: |
           docker compose -f docker-compose.prod.yml build
           docker push majdeq/grog_blog-frontend:latest
+          docker push majdeq/grog_blog-backend:latest
+          
+          
 
       - name: Deploy to Droplet
         uses: appleboy/ssh-action@master
