@@ -22,8 +22,13 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Build 
-        run: npm run build
+      - name: Build frontend and backend
+        run: |
+          cd frontend
+          npm run build
+          cd ../backend
+          npm run build
+
 
       - name: Deploy to Droplet
         uses: appleboy/ssh-action@master
