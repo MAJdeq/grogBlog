@@ -10,24 +10,22 @@ import { AdminForm } from "./forms/AdminForm.tsx";
 
 const router = createBrowserRouter([
   {
-    path: "/",          // root path
+    path: "/",
     element: <NavLayout />,
     children: [
       {
-        path: "/",      // nested layout path
         element: <DashLayout />,
         children: [
-          { path: "home", element: <HomePage /> },
+          { index: true, element: <HomePage /> }, // <-- this is now the default
           { path: "blogs", element: <BlogsPage /> },
         ],
       },
     ],
   },
-  {
-    path: "/admin_login",
-    element: <AdminForm />,
-  },
+  { path: "/admin_login", element: <AdminForm /> },
 ]);
+
+
 
 
 createRoot(document.getElementById("root")!).render(
