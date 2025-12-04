@@ -17,9 +17,11 @@ export const AdminForm = () => {
     },
   });
 
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   const onSubmit = async (values: z.infer<typeof adminFormSchema>) => {
     try {
-      const response = await fetch("http://localhost:5000/auth/sign_in", {
+      const response = await fetch(`${apiUrl}/auth/sign_in`, {
         method: "POST", // typically sign-in is POST
         headers: {
           "Content-Type": "application/json",
