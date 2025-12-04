@@ -19,7 +19,7 @@ export const HomePage = () => {
         <li><em>Ricing Linux</em></li>
         <li><em>Game theory</em></li>
         <li><em>Multi-agent systems</em></li>
-        <li><em>Gaming</em></li>
+        <li><em>Game Stuff</em></li>
       </ul>
     </div>
   );
