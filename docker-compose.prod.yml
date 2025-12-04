@@ -18,7 +18,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        VITE_API_URL: "http://grogblog.xyz:3000"
+        VITE_API_URL: "https://grogblog.xyz:3000"
     image: majdeq/grog_blog-frontend:latest
     container_name: frontend
     restart: always
