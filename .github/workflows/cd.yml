@@ -41,18 +41,18 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       
-      - name: Build and Push Docker Images
+      - name: Login to Docker
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push images
         run: |
-          # Build images using your existing docker-compose file
           docker compose -f docker-compose.prod.yml build
-
-          # Tag images for Docker Hub
-          docker tag frontend majdeq/grog_blog-frontend:latest
-          docker tag backend majdeq/grog_blog-backend:latest
-
-          # Push to Docker Hub
           docker push majdeq/grog_blog-frontend:latest
           docker push majdeq/grog_blog-backend:latest
+
 
 
 
