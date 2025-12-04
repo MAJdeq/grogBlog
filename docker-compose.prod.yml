@@ -8,8 +8,6 @@ services:
     restart: always
     env_file:
       - ./backend/.env
-    ports:
-      - "5000:5000"
     depends_on:
       - db
 
@@ -23,7 +21,7 @@ services:
     env_file:
       - ./frontend/.env
     ports:
-      - "5173:5173"
+      - "80:5000"
 
   db:
     image: postgres:16
@@ -35,5 +33,3 @@ services:
       PGDATA: /var/lib/postgresql/data/
     volumes:
       - ./db-data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"

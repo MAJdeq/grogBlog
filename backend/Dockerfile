@@ -29,5 +29,4 @@ COPY --from=builder /app/prisma ./prisma
 # Copy package.json for metadata
 COPY package*.json ./
 
-EXPOSE 5000
 CMD ["node", "build/index.js"]
