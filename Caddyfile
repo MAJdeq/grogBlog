@@ -1,4 +1,4 @@
-grogblog.xyz, www.grogblog.xyz{
+grogblog.xyz, www.grogblog.xyz {
     reverse_proxy frontend:5000
 }
 
