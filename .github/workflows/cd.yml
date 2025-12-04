@@ -8,33 +8,49 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
-
-
+    env:
+      DOCKER_BUILDKIT: 1
+      COMPOSE_DOCKER_CLI_BUILD: 1
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-        
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push all images
+        run: |
+          # Build all services using BuildKit
+          docker compose -f docker-compose.prod.yml build --pull
+
+          # Push all images defined in docker-compose.prod.yml
+          docker compose -f docker-compose.prod.yml push
+
       - name: Deploy to Droplet
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.DROPLET_IP }}
           username: deploy
           key: ${{ secrets.DROPLET_SSH_KEY }}
+          passphrase: ${{ secrets.DROPLET_PASSPHRASE }}
           script: |
             set -euo pipefail
+
             cd /var/www/grogBlog
 
-            echo "Pull latest code"
-            git pull origin main
+            echo "Stopping and removing old containers..."
+            docker compose -f docker-compose.prod.yml down || true
 
-            echo "Build images first (site still live)"
-            docker compose -f docker-compose.prod.yml build --pull
+            echo "Cleaning up dangling images and volumes..."
+            docker image prune -f || true
+            docker volume prune -f || true
 
-            echo "Stop old containers"
-            docker compose -f docker-compose.prod.yml down
+            echo "Pulling latest images from Docker Hub..."
+            docker compose -f docker-compose.prod.yml pull
 
-            echo "Start new containers"
+            echo "Starting containers..."
             docker compose -f docker-compose.prod.yml up -d
