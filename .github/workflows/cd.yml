@@ -40,10 +40,10 @@ jobs:
 
       - name: Build Frontend Docker Image
         run: |
-          cd frontend
           docker build \
             --build-arg VITE_API_URL=${{ secrets.VITE_API_URL }} \
-            -t majdeq/grog_blog-frontend:latest .
+            -t majdeq/grog_blog-frontend:latest ./frontend
+
 
       
       - name: Build Backend
