@@ -1,3 +1,3 @@
 export const BlogsPage = () => {
-  return <div>yto</div>;
+  return <div>wasup</div>;
 };
