@@ -1,20 +1,13 @@
-# Production image
 FROM node:22-alpine
 
-# Set working directory
 WORKDIR /app
 
-# Copy dependency files first
 COPY package*.json ./
-
-# Clean install dependencies
 RUN npm install
 
-# Copy the rest of the app
+# CRITICAL — must copy prisma folder into the image
+COPY prisma ./prisma
+
 COPY . .
 
-# Expose backend port
-EXPOSE 5000
-
-# Start app
 CMD ["npm", "run", "start"]
