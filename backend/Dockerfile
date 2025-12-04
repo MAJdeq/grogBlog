@@ -1,24 +1,20 @@
-# Backend build stage
-FROM node:22-alpine AS builder
+# Production image
+FROM node:22-alpine
+
+# Set working directory
 WORKDIR /app
 
-# Copy only dependency files
+# Copy dependency files first
 COPY package*.json ./
-RUN npm ci
 
-# Copy all code
+# Clean install dependencies
+RUN npm ci --legacy-peer-deps
+
+# Copy the rest of the app
 COPY . .
 
-# Build backend (if using TypeScript or bundler)
-RUN npm run build
-
-# Production stage
-FROM node:22-alpine
-WORKDIR /app
-
-# Copy built app & node_modules
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/package*.json ./
-
+# Expose backend port
 EXPOSE 5000
+
+# Start app
 CMD ["npm", "run", "start"]
