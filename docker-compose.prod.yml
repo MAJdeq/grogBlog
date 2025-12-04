@@ -10,6 +10,8 @@ services:
       - ./backend/.env
     depends_on:
       - db
+    command: sh -c "npm run seed_admin && node build/index.js"
+
 
   frontend:
     build:
