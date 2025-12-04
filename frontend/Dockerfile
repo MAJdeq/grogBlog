@@ -1,24 +1,20 @@
-# builder
-FROM node:22 as builder
-
-# set up working dir
+# Frontend build stage
+FROM node:22-alpine AS builder
 WORKDIR /app
 
-# copy and install dependencies
-COPY package*json ./
-RUN npm install
+# Only copy package files first
+COPY package*.json ./
 
-# copy rest of project
+# Clean install dependencies
+RUN npm ci --legacy-peer-deps --verbose
+
+# Copy source code
 COPY . .
 
-# build
+# Build the frontend
 RUN npm run build
 
-# production image
+# Production stage
 FROM nginx:1.29.3
-
-# copy build to nginx
 COPY --from=builder /app/dist /usr/share/nginx/html
-
-#expose nginx
 EXPOSE 80
