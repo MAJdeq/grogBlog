@@ -1,6 +1,3 @@
-# SET UP ENVIRONMENT
-# DEPLOY
-
 name: Continuous Delivery
 
 on:
@@ -9,25 +6,29 @@ on:
       - main
 
 jobs:
-  checks: 
+  deploy:
     runs-on: ubuntu-latest
-    
+    env:
+      DOCKER_BUILDKIT: 1
+      COMPOSE_DOCKER_CLI_BUILD: 1
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-      
-      - name: Login to Docker
+
+      - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push images
+      - name: Build and push all images
         run: |
-          docker compose -f docker-compose.prod.yml build
-          docker push majdeq/grog_blog-frontend:latest
-          docker push majdeq/grog_blog-backend:latest
-   
+          # Build all services using BuildKit
+          docker compose -f docker-compose.prod.yml build --pull
+
+          # Push all images defined in docker-compose.prod.yml
+          docker compose -f docker-compose.prod.yml push
 
       - name: Deploy to Droplet
         uses: appleboy/ssh-action@master
@@ -35,24 +36,20 @@ jobs:
           host: ${{ secrets.DROPLET_IP }}
           username: deploy
           key: ${{ secrets.DROPLET_SSH_KEY }}
-          passphrase: ${{ secrets.DROPLET_PASSPHRASE }}
           script: |
             set -euo pipefail
 
             cd /var/www/grogBlog
 
-            # ---------------------------
-            # CLEAN UP OLD DOCKER ARTIFACTS
-            # ---------------------------
-            echo "Cleaning up old Docker images, containers, volumes..."
-            docker system prune -af || true
+            echo "Stopping and removing old containers..."
+            docker compose -f docker-compose.prod.yml down || true
+
+            echo "Cleaning up dangling images and volumes..."
+            docker image prune -f || true
             docker volume prune -f || true
 
-            # ---------------------------
-            # PULL AND START NEW IMAGES
-            # ---------------------------
-            git pull origin main
-
+            echo "Pulling latest images from Docker Hub..."
             docker compose -f docker-compose.prod.yml pull
-            docker compose -f docker-compose.prod.yml up -d --remove-orphans
 
+            echo "Starting containers..."
+            docker compose -f docker-compose.prod.yml up -d
