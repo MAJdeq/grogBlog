@@ -24,10 +24,7 @@ jobs:
 
       - name: Build and push all images
         run: |
-          # Build all services using BuildKit
           docker compose -f docker-compose.prod.yml build --pull
-
-          # Push all images defined in docker-compose.prod.yml
           docker compose -f docker-compose.prod.yml push
 
       - name: Deploy to Droplet
@@ -41,15 +38,17 @@ jobs:
 
             cd /var/www/grogBlog
 
-            echo "Stopping and removing old containers..."
-            docker compose -f docker-compose.prod.yml down || true
+            echo "Pulling latest git repo files..."
+            git pull origin main
 
-            echo "Cleaning up dangling images and volumes..."
-            docker image prune -f || true
-            docker volume prune -f || true
+            echo "Stopping containers..."
+            docker compose -f docker-compose.prod.yml down
 
-            echo "Pulling latest images from Docker Hub..."
+            docker image prune -af || true
+            docker container prune -f || true
+
+            echo "Pulling new images from Docker Hub..."
             docker compose -f docker-compose.prod.yml pull
 
-            echo "Starting containers..."
+            echo "Starting updated containers..."
             docker compose -f docker-compose.prod.yml up -d
