@@ -10,6 +10,8 @@ services:
       - ./backend/.env
     depends_on:
       - db
+    ports:
+      - "3000:3000"
 
 
   frontend:
@@ -32,3 +34,5 @@ services:
       PGDATA: /var/lib/postgresql/data/
     volumes:
       - ./db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
