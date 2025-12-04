@@ -17,11 +17,11 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        VITE_API_URL: "http://grogblog.xyz:3000"
     image: majdeq/grog_blog-frontend:latest
     container_name: frontend
     restart: always
-    env_file:
-      - ./frontend/.env
     ports:
       - "80:5000"
 
