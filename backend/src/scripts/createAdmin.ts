@@ -1,4 +1,4 @@
-import { prisma } from "../../src/lib/db";
+import { prisma } from "../lib/db";
 import bcrypt from "bcrypt";
 
 const email = process.env.ADMIN_EMAIL!;
