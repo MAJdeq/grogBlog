@@ -16,7 +16,6 @@ model Admin {
   updatedAt    DateTime       @updatedAt
 }
 
-
 model Blog {
   id           String         @id @default(uuid()) // UUID primary key
   title        String         // title
