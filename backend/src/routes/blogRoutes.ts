@@ -1,0 +1,13 @@
+import express from "express";
+import multer from "multer";
+import * as BlogController from "../controllers/BlogController";
+
+const router = express.Router();
+const storage = multer.memoryStorage();
+const upload = multer({ storage })
+
+router.post("/add_blog", upload.single("banner"), BlogController.add_blog);
+router.get("/get_blogs", BlogController.get_blogs)
+
+
+export default router;

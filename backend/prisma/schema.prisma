@@ -19,8 +19,8 @@ model Admin {
 model Blog {
   id           String         @id @default(uuid()) // UUID primary key
   title        String         // title
-  author       String         // author
   content      String         // content
+  bannerUrl    String         // bannerurl
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
 }
