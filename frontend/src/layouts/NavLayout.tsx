@@ -109,6 +109,14 @@ export const NavLayout = () => {
                       </Link>
                     </DropdownMenuItem>
                   ))}
+                  {authorized && (
+                    <DropdownMenuItem>
+                      <Button onClick={handleLogout}>
+                        Logout
+                      </Button>
+                    </DropdownMenuItem>
+                  )}
+    
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
