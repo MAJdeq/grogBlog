@@ -1,3 +1,13 @@
+import { useAdminStore } from "../stores/AuthStore";
+import { Button } from "../components/ui/button";
+
 export const BlogsPage = () => {
-  return <div>hi sofia</div>;
+  const { authorized } = useAdminStore();
+  return (
+    <div className="text-center">
+      {authorized && (
+        <Button> Add Blog </Button>
+      )}
+    </div>
+  );
 };
