@@ -5,9 +5,11 @@ import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
+import { useAdminStore } from "@/stores/AuthStore";
 
 export const AdminForm = () => {
   const navigate = useNavigate();
+  const { authorized } = useAdminStore();
 
   const form = useForm<z.infer<typeof adminFormSchema>>({
     resolver: zodResolver(adminFormSchema),
@@ -43,6 +45,9 @@ export const AdminForm = () => {
     }
   };
 
+  if (authorized) {
+    navigate("/")
+  }
   return (
     <>
       <div className="flex items-center justify-center">

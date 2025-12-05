@@ -74,7 +74,7 @@ export const NavLayout = () => {
 
   return (
     <>
-      <div className="bg-background mx-10 lg:max-w-5xl lg:mx-auto pt-10 lg:pt-40">
+      <div className="mx-10 lg:max-w-5xl lg:mx-auto pt-10 lg:pt-40">
         {/* NAVBAR */}
         <div className="flex flex-initial items-center justify-between">
           <h1 className="text-3xl font-bold">GrogBlog</h1>

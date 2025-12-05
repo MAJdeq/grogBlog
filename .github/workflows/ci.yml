@@ -23,6 +23,16 @@ jobs:
           cd ../backend
           npm install
 
+      - name: Type Check Backend
+        run: |
+          cd backend
+          npx tsc --noEmit
+      
+      - name: Type Check Frontend
+        run: |
+          cd frontend
+          npx tsc --noEmit
+
       - name: Build frontend and backend
         run: |
           cd frontend
