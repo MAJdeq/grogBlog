@@ -89,24 +89,36 @@ export const BlogForm = ({ mode = "add", blog, onSuccess }: BlogFormProps) => {
   };
 
   return (
-    <div className="flex items-center justify-center p-4">
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full max-w-2xl space-y-4">
-        <Input placeholder="Title" {...form.register("title")} required />
-        <Textarea placeholder="Content" {...form.register("content")} required />
-        {/* File Upload */}
-        <input
+  <div className="flex items-center justify-center p-4">
+    <form onSubmit={form.handleSubmit(onSubmit)} className="w-full max-w-2xl space-y-4">
+      <Input placeholder="Title" {...form.register("title")} required />
+      <Textarea placeholder="Content" {...form.register("content")} required />
+      
+      {/* Styled File Upload */}
+      <div className="space-y-2">
+        <label 
+          htmlFor="banner-upload" 
+          className="block text-sm font-medium text-gray-700"
+        >
+          Banner Image {mode === "add" && <span className="text-red-500">*</span>}
+        </label>
+        <Input
+          id="banner-upload"
           type="file"
           accept="image/*"
+          className="cursor-pointer"
           onChange={(e) => {
             const file = e.target.files?.[0] ?? null;
             form.setValue("banner", file, { shouldDirty: true });
             console.log("Banner selected:", file);
           }}
         />
-        <Button type="submit">
-          {mode === "add" ? "Add Blog" : "Save Changes"}
-        </Button>
-      </form>
-    </div>
-  );
+      </div>
+
+      <Button type="submit" className="w-full">
+        {mode === "add" ? "Add Blog" : "Save Changes"}
+      </Button>
+    </form>
+  </div>
+);
 };
