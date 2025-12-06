@@ -9,10 +9,10 @@ export const adminFormSchema = z.object({
 
 
 export const blogFormSchema = z.object({
-  title: z.string(),
-  content: z.string(),
+  title: z.string().min(1, "Title is required"),
+  content: z.string().min(1, "Content is required"),
   banner: z
-    .any()
-    .refine((file) => file instanceof FileList && file.length > 0, "Banner is required")
-    .optional(), // if not required
+    .instanceof(File)
+    .nullable()
+    .optional(),
 });

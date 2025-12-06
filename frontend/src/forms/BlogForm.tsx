@@ -44,33 +44,31 @@ export const BlogForm = ({ mode = "add", blog, onSuccess }: BlogFormProps) => {
   }, [blog, mode, form]);
 
   const onSubmit = async (values: z.infer<typeof blogFormSchema>) => {
+    
     try {
-      // Require banner only for adding
-      if (mode === "add" && (!values.banner || values.banner.length === 0)) {
+      // Only require banner for adding
+      if (mode === "add" && !values.banner) {
         alert("Please select a banner image.");
-        return; // stop submission
+        return;
       }
 
       const formData = new FormData();
       formData.append("title", values.title);
       formData.append("content", values.content);
-
-      // Append file only if present (optional for edit)
-      if (values.banner && values.banner.length > 0) {
-        formData.append("banner", values.banner[0]);
+      
+      // Always append banner if it exists
+      if (values.banner) {
+        formData.append("banner", values.banner);
       }
-
-      let endpoint = "";
-      let method: "POST" | "PUT" = "POST";
-
-      if (mode === "add") {
-        endpoint = `${apiUrl}/blogs/add_blog`;
-        method = "POST";
-      } else if (mode === "edit" && blog) {
-        endpoint = `${apiUrl}/blogs/edit_blog`;
-        method = "PUT";
+      
+      if (mode === "edit" && blog) {
         formData.append("id", blog.id);
       }
+
+
+      const endpoint =
+        mode === "add" ? `${apiUrl}/blogs/add_blog` : `${apiUrl}/blogs/edit_blog`;
+      const method: "POST" | "PUT" = mode === "add" ? "POST" : "PUT";
 
       const response = await fetch(endpoint, {
         method,
@@ -78,23 +76,17 @@ export const BlogForm = ({ mode = "add", blog, onSuccess }: BlogFormProps) => {
         body: formData,
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
       const result = await response.json();
-
-      if (mode === "add") {
-        navigate("/");
-      } else if (mode === "edit") {
-        onSuccess?.(result.updatedBlog);
-      }
-
-    } catch (error) {
-      console.error("Blog form error:", error);
+      
+      if (mode === "add") navigate("/");
+      else onSuccess?.(result.updatedBlog);
+    } catch (err) {
+      console.error("Blog form error:", err);
     }
   };
-
 
   return (
     <div className="flex items-center justify-center">
@@ -107,10 +99,12 @@ export const BlogForm = ({ mode = "add", blog, onSuccess }: BlogFormProps) => {
           type="file"
           accept="image/*"
           onChange={(e) => {
-            form.setValue("banner", e.target.files?.[0]);
-            console.log("File selected:", e.target.files?.[0]);
+            const file = e.target.files?.[0] ?? null;
+            form.setValue("banner", file, { shouldDirty: true }); // mark dirty explicitly
+            console.log("Banner selected:", file);
           }}
         />
+
 
 
         <Button type="submit">
