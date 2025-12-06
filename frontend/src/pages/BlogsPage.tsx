@@ -110,22 +110,32 @@ export const BlogsPage = () => {
                   </h2>
                 </div>
 
-                <div className="flex justify-end mt-auto">
-                  <Button onClick={() => navigate(`/blog/${blog.id}`)}>
+                <div className="flex flex-wrap gap-2 mt-auto pt-4">
+                  <Button 
+                    variant="outline"
+                    size="sm"
+                    onClick={() => navigate(`/blog/${blog.id}`)}
+                  >
                     Open
                   </Button>
                   {authorized && (
                     <>
-                      <Button onClick={() => handleDelete(blog.id, blog.bannerUrl)}>
-                        Delete Blog
-                      </Button>
                       <Button
+                        variant="outline"
+                        size="sm"
                         onClick={() => {
-                          setBlogToEdit(blog);     // store selected blog
-                          setEditBlogOpen(true);   // open modal
+                          setBlogToEdit(blog);
+                          setEditBlogOpen(true);
                         }}
                       >
                         Edit Blog
+                      </Button>
+                      <Button 
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleDelete(blog.id, blog.bannerUrl)}
+                      >
+                        Delete Blog
                       </Button>
                     </>
                   )}

@@ -89,24 +89,20 @@ export const BlogForm = ({ mode = "add", blog, onSuccess }: BlogFormProps) => {
   };
 
   return (
-    <div className="flex items-center justify-center">
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+    <div className="flex items-center justify-center p-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full max-w-2xl space-y-4">
         <Input placeholder="Title" {...form.register("title")} required />
         <Textarea placeholder="Content" {...form.register("content")} required />
-
         {/* File Upload */}
         <input
           type="file"
           accept="image/*"
           onChange={(e) => {
             const file = e.target.files?.[0] ?? null;
-            form.setValue("banner", file, { shouldDirty: true }); // mark dirty explicitly
+            form.setValue("banner", file, { shouldDirty: true });
             console.log("Banner selected:", file);
           }}
         />
-
-
-
         <Button type="submit">
           {mode === "add" ? "Add Blog" : "Save Changes"}
         </Button>
