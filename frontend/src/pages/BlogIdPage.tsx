@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Markdown from 'react-markdown';
+import { ArrowLeft } from "lucide-react";
 
 
 type Blog = {
@@ -15,6 +16,7 @@ export const BlogIdPage = () => {
 
   const { id } = useParams();
   const [blog, setBlog] = useState<Blog>()
+  const navigate = useNavigate();
   
   const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -50,10 +52,16 @@ export const BlogIdPage = () => {
 
   return (
     <>
+        <div>
+          <ArrowLeft 
+            onClick={() => navigate(-1)} // goes back to previous page
+            className="cursor-pointer"   // optional: show hand cursor
+          />
+        </div>
         <div className="max-w-full px-4">
-            <div className="mb-4 break-words">
-                {blog.title}
-            </div>
+            <h1 className="text-4xl font-bold mb-4 break-words">
+              {blog.title}
+            </h1>
             <div className="markdown prose max-w-none break-words overflow-hidden">
                 <Markdown>{blog.content}</Markdown>
             </div>
