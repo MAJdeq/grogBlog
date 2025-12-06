@@ -28,6 +28,8 @@ COPY --from=builder /app/src ./src
 # Copy Prisma schema & migrations
 COPY --from=builder /app/prisma ./prisma
 
+COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
+
 # Copy package.json for metadata
 COPY package*.json ./
 
