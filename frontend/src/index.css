@@ -118,3 +118,21 @@
     @apply bg-secondary text-foreground;
   }
 }
+
+.markdown h1 { font-size: 2rem; font-weight: bold; } 
+.markdown h2 { font-size: 1.5rem; font-weight: bold; }
+.markdown ul {
+  list-style-type: disc;
+  padding-left: 2rem;
+  margin: 1rem 0;
+}
+
+.markdown ol {
+  list-style-type: decimal;
+  padding-left: 2rem;
+  margin: 1rem 0;
+}
+
+.markdown li {
+  margin: 0.5rem 0;
+}

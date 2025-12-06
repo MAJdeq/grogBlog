@@ -5,6 +5,7 @@ import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
+import { Textarea } from "@/components/ui/textarea";
 
 export const BlogForm = () => {
   const navigate = useNavigate();
@@ -52,7 +53,7 @@ export const BlogForm = () => {
       <div className="flex items-center justify-center">
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <Input placeholder="Title" {...form.register("title")} required />
-          <Input placeholder="Content" {...form.register("content")} required />
+          <Textarea placeholder="Content" {...form.register("content")} required />
           <input
             type="file"
             {...form.register("banner")}

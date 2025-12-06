@@ -3,9 +3,10 @@ import { Button } from "../components/ui/button";
 import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription } from "../components/ui/dialog";
 import { useEffect, useState } from "react";
 import { BlogForm } from "../forms/BlogForm";
+import { useNavigate } from "react-router-dom";
 
 type Blog = {
-  id: number;
+  id: string;
   title: string;
   content: string;
   bannerUrl: string;
@@ -18,6 +19,30 @@ export const BlogsPage = () => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   
   const apiUrl = import.meta.env.VITE_API_URL;
+  const navigate = useNavigate();
+
+  const handleDelete = async (id: string, blogUrl: string) => {
+    try {
+      const response = await fetch(`${apiUrl}/blogs/delete_blog/`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ id, blogUrl }),
+      });
+
+      if (!response.ok) {
+        console.error("Something went wrong when deleting this blog...");
+        return;
+      }
+
+      // <-- You need this to update the UI
+      setBlogs((prev) => prev.filter((blog) => blog.id !== id));
+
+    } catch (err) {
+      console.error("Network or auth check error: ", err);
+    }
+  };
+
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -41,6 +66,7 @@ export const BlogsPage = () => {
 
     fetchBlogs();
   }, []);
+  
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-6">
@@ -81,10 +107,15 @@ export const BlogsPage = () => {
                 </div>
 
                 <div className="flex justify-end mt-auto">
-                    <Button>
-                      Open
+                  <Button onClick={() => navigate(`/blog/${blog.id}`)}>
+                    Open
+                  </Button>
+                  {authorized && (
+                    <Button onClick={() => handleDelete(blog.id, blog.bannerUrl)}>
+                      Delete Blog
                     </Button>
-                  </div>
+                  )}
+                </div>
               </div>
 
             </div>

@@ -11,4 +11,26 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          // Split node_modules into separate chunks
+          if (id.includes('node_modules')) {
+            // React and React-related libraries
+            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
+              return 'react-vendor';
+            }
+            // Markdown library
+            if (id.includes('markdown')) {
+              return 'markdown-vendor';
+            }
+            // All other dependencies
+            return 'vendor';
+          }
+        },
+      },
+    },
+    chunkSizeWarningLimit: 600, // Adjust if needed
+  },
 });

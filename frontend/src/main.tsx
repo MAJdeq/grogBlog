@@ -7,6 +7,7 @@ import { BlogsPage } from "./pages/BlogsPage.tsx";
 import { HomePage } from "./pages/HomePage.tsx";
 import { DashLayout } from "./layouts/DashLayout.tsx";
 import { AdminForm } from "./forms/AdminForm.tsx";
+import { BlogIdPage } from "./pages/BlogIdPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -18,6 +19,7 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <HomePage /> }, // <-- this is now the default
           { path: "blogs", element: <BlogsPage /> },
+          { path: "blog/:id", element: <BlogIdPage />}
         ],
       },
     ],
