@@ -38,3 +38,16 @@ export const deleteBlog = async (id: string) => {
 
   return blog
 }
+
+// services/blogService.ts
+export const updateBlog = async (id: string, data: {
+  title?: string;
+  content?: string;
+  bannerUrl?: string;
+  updatedAt?: Date;
+}) => {
+  return prisma.blog.update({
+    where: { id },
+    data,
+  });
+};

@@ -6,62 +6,106 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { Textarea } from "@/components/ui/textarea";
+import { useEffect } from "react";
 
-export const BlogForm = () => {
+type Blog = {
+  id: string;
+  title: string;
+  content: string;
+  bannerUrl: string;
+  createdAt?: string;
+};
+
+type BlogFormProps = {
+  mode?: "add" | "edit";
+  blog?: Blog | null;
+  onSuccess?: (updatedBlog: Blog) => void;
+};
+
+export const BlogForm = ({ mode = "add", blog, onSuccess }: BlogFormProps) => {
   const navigate = useNavigate();
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const form = useForm<z.infer<typeof blogFormSchema>>({
     resolver: zodResolver(blogFormSchema),
     defaultValues: {
-      title: "",
-      content: "",
+      title: blog?.title ?? "",
+      content: blog?.content ?? "",
       banner: undefined,
     },
   });
 
-  const apiUrl = import.meta.env.VITE_API_URL;
+  // Pre-fill fields when editing (important)
+  useEffect(() => {
+    if (mode === "edit" && blog) {
+      form.setValue("title", blog.title);
+      form.setValue("content", blog.content);
+    }
+  }, [blog, mode, form]);
 
   const onSubmit = async (values: z.infer<typeof blogFormSchema>) => {
-    console.log(values);
     try {
-        const formData = new FormData();
+      const formData = new FormData();
 
-        formData.append("title", values.title)
-        formData.append("content", values.content)
-        if (values.banner && values.banner.length > 0) {
-            formData.append("banner", values.banner[0]);
-        }
+      formData.append("title", values.title);
+      formData.append("content", values.content);
 
+      if (values.banner && values.banner.length > 0) {
+        formData.append("banner", values.banner[0]);  // backend expects "file"
+      }
 
-      const response = await fetch(`${apiUrl}/blogs/add_blog`, {
-        method: "POST", // typically sign-in is POST
+      let endpoint = "";
+      let method: "POST" | "PUT" = "POST";
+
+      if (mode === "add") {
+        endpoint = `${apiUrl}/blogs/add_blog`;
+        method = "POST";
+      }
+
+      if (mode === "edit" && blog) {
+        endpoint = `${apiUrl}/blogs/edit_blog`;
+        method = "PUT";
+        formData.append("id", blog.id);
+      }
+
+      const response = await fetch(endpoint, {
+        method,
         credentials: "include",
-        body: formData
+        body: formData,
       });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      navigate("/")
+      const result = await response.json();
+
+      if (mode === "add") {
+        navigate("/");
+      }
+
+      if (mode === "edit") {
+        onSuccess?.(result.updatedBlog);
+      }
+
     } catch (error) {
-      console.error("There was an error fetching the data:", error);
+      console.error("Blog form error:", error);
     }
   };
+
   return (
-    <>
-      <div className="flex items-center justify-center">
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <Input placeholder="Title" {...form.register("title")} required />
-          <Textarea placeholder="Content" {...form.register("content")} required />
-          <input
-            type="file"
-            {...form.register("banner")}
-            accept="image/*"
-            />
-          <Button type="submit">Submit</Button>
-        </form>
-      </div>
-    </>
+    <div className="flex items-center justify-center">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <Input placeholder="Title" {...form.register("title")} required />
+        <Textarea placeholder="Content" {...form.register("content")} required />
+
+        {/* File Upload */}
+        <input type="file" accept="image/*" {...form.register("banner")} />
+
+        <Button type="submit">
+          {mode === "add" ? "Add Blog" : "Save Changes"}
+        </Button>
+      </form>
+    </div>
   );
 };

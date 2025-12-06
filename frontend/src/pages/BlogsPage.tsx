@@ -15,7 +15,10 @@ type Blog = {
 
 export const BlogsPage = () => {
   const { authorized } = useAdminStore();
-  const [open, setOpen] = useState(false);
+  const [addBlogOpen, setAddBlogOpen] = useState(false);
+  const [editBlogOpen, setEditBlogOpen] = useState(false);
+  const [blogToEdit, setBlogToEdit] = useState<Blog | null>(null);
+
   const [blogs, setBlogs] = useState<Blog[]>([]);
   
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -42,6 +45,7 @@ export const BlogsPage = () => {
       console.error("Network or auth check error: ", err);
     }
   };
+
 
 
   useEffect(() => {
@@ -111,9 +115,19 @@ export const BlogsPage = () => {
                     Open
                   </Button>
                   {authorized && (
-                    <Button onClick={() => handleDelete(blog.id, blog.bannerUrl)}>
-                      Delete Blog
-                    </Button>
+                    <>
+                      <Button onClick={() => handleDelete(blog.id, blog.bannerUrl)}>
+                        Delete Blog
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          setBlogToEdit(blog);     // store selected blog
+                          setEditBlogOpen(true);   // open modal
+                        }}
+                      >
+                        Edit Blog
+                      </Button>
+                    </>
                   )}
                 </div>
               </div>
@@ -126,12 +140,12 @@ export const BlogsPage = () => {
       {/* Add Blog Button (bottom of page) */}
       {authorized && (
         <div className="flex justify-center">
-          <Button onClick={() => setOpen(true)}>Add Blog</Button>
+          <Button onClick={() => setAddBlogOpen(true)}>Add Blog</Button>
         </div>
       )}
 
       {/* Dialog */}
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={addBlogOpen} onOpenChange={setAddBlogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add a New Blog</DialogTitle>
@@ -141,6 +155,31 @@ export const BlogsPage = () => {
           </DialogHeader>
 
           <BlogForm />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={editBlogOpen} onOpenChange={setEditBlogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit a Blog</DialogTitle>
+            <DialogDescription>
+              Edit the form below to edit the blog post
+            </DialogDescription>
+          </DialogHeader>
+
+          <BlogForm
+            mode="edit"
+            blog={blogToEdit}
+            onSuccess={(updatedBlog: Blog) => {
+              // update UI after edit
+              setBlogs(prev =>
+                prev.map((b) =>
+                  b.id === updatedBlog.id ? updatedBlog : b
+                )
+              );
+              setEditBlogOpen(false);
+            }}
+          />
         </DialogContent>
       </Dialog>
     </div>

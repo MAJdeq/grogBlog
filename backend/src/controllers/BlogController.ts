@@ -78,3 +78,65 @@ export const delete_blog = async (req: Request, res: Response) => {
     return res.status(500).json({ message: e.message });
   }
 };
+
+export const edit_blog = async (req: Request, res: Response) => {
+  try {
+    const { id, title, content } = req.body;
+    const newFile = req.file; // optional
+
+    // 1. Fetch existing blog
+    const oldBlog = await blogService.getBlog(id);
+    if (!oldBlog) {
+      return res.status(404).json({ message: "Blog not found" });
+    }
+
+    let bannerUrl = oldBlog.bannerUrl;
+
+    // 2. If a new banner was uploaded, replace the old image
+    if (newFile) {
+      const oldFileKey = oldBlog.bannerUrl.split("/").pop();
+      const newFileKey = newFile.originalname;
+
+      // Delete the old file
+      if (oldFileKey) {
+        await s3.send(
+          new DeleteObjectCommand({
+            Bucket: "grog_blog_banners",
+            Key: oldFileKey,
+          })
+        );
+      }
+
+      // Upload the new file with a NEW NAME
+      await s3.send(
+        new PutObjectCommand({
+          Bucket: "grog_blog_banners",
+          Key: newFileKey,
+          Body: newFile.buffer,
+          ContentType: newFile.mimetype,
+        })
+      );
+
+      // Update banner URL
+      bannerUrl = `${process.env.PUBLIC_URL}grog_blog_banners/${newFileKey}`;
+    }
+
+    // 3. Update blog in DB
+    const updatedBlog = await blogService.updateBlog(id, {
+      title,
+      content,
+      bannerUrl,
+      updatedAt: new Date(),
+    });
+
+    return res.json({ updatedBlog });
+
+  } catch (e: any) {
+    console.error("EDIT_BLOG ERROR:", e);
+    return res.status(500).json({ message: e.message || "Internal server error" });
+  }
+};
+
+
+
+
