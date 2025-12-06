@@ -6,8 +6,15 @@ import blogRoutes from "./routes/blogRoutes";
 
 const app = express();
 
+const allowedOrigins = [
+  process.env.FRONTEND_URL!,
+  'https://grogblog.xyz',
+  'https://www.grogblog.xyz',
+  'http://localhost:5173', // For local development
+].filter(Boolean);
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL,
+  origin: allowedOrigins,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
