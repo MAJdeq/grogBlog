@@ -21,7 +21,7 @@ export const add_blog = async (req: Request, res: Response) => {
 
     await s3.send(command);
 
-    const publicUrl = `${process.env.PUBLIC_URL}/${file.originalname}`
+    const publicUrl = `${process.env.PUBLIC_URL}grog_blog_banners/${file.originalname}`
 
     const { newBlog } = await blogService.addBlog(title, content, publicUrl)
 
