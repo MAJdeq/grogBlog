@@ -45,13 +45,19 @@ export const BlogForm = ({ mode = "add", blog, onSuccess }: BlogFormProps) => {
 
   const onSubmit = async (values: z.infer<typeof blogFormSchema>) => {
     try {
-      const formData = new FormData();
+      // Require banner only for adding
+      if (mode === "add" && (!values.banner || values.banner.length === 0)) {
+        alert("Please select a banner image.");
+        return; // stop submission
+      }
 
+      const formData = new FormData();
       formData.append("title", values.title);
       formData.append("content", values.content);
 
+      // Append file only if present (optional for edit)
       if (values.banner && values.banner.length > 0) {
-        formData.append("banner", values.banner[0]);  // backend expects "file"
+        formData.append("banner", values.banner[0]);
       }
 
       let endpoint = "";
@@ -60,9 +66,7 @@ export const BlogForm = ({ mode = "add", blog, onSuccess }: BlogFormProps) => {
       if (mode === "add") {
         endpoint = `${apiUrl}/blogs/add_blog`;
         method = "POST";
-      }
-
-      if (mode === "edit" && blog) {
+      } else if (mode === "edit" && blog) {
         endpoint = `${apiUrl}/blogs/edit_blog`;
         method = "PUT";
         formData.append("id", blog.id);
@@ -82,9 +86,7 @@ export const BlogForm = ({ mode = "add", blog, onSuccess }: BlogFormProps) => {
 
       if (mode === "add") {
         navigate("/");
-      }
-
-      if (mode === "edit") {
+      } else if (mode === "edit") {
         onSuccess?.(result.updatedBlog);
       }
 
@@ -93,6 +95,7 @@ export const BlogForm = ({ mode = "add", blog, onSuccess }: BlogFormProps) => {
     }
   };
 
+
   return (
     <div className="flex items-center justify-center">
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -100,7 +103,15 @@ export const BlogForm = ({ mode = "add", blog, onSuccess }: BlogFormProps) => {
         <Textarea placeholder="Content" {...form.register("content")} required />
 
         {/* File Upload */}
-        <input type="file" accept="image/*" {...form.register("banner")} />
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => {
+            form.setValue("banner", e.target.files?.[0]);
+            console.log("File selected:", e.target.files?.[0]);
+          }}
+        />
+
 
         <Button type="submit">
           {mode === "add" ? "Add Blog" : "Save Changes"}
