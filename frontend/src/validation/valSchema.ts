@@ -16,3 +16,13 @@ export const blogFormSchema = z.object({
     .nullable()
     .optional(),
 });
+
+export const movieFormSchema = z.object({
+  title: z.string().min(1),
+  content: z.string().min(1),
+    banner: z
+    .instanceof(File)
+    .nullable()
+    .optional(),
+  rating: z.number().min(0).max(10),
+});
