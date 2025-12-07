@@ -66,7 +66,7 @@ export const delete_movie = async (req: Request, res: Response) => {
     // Delete from R2
     await s3.send(
       new DeleteObjectCommand({
-        Bucket: "grog_movies_banners",
+        Bucket: "grog_movie_banners",
         Key: fileKey,
       })
     );

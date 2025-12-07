@@ -12,7 +12,7 @@ type Movie = {
   id: string;
   title: string;
   content: string;
-  rating: string,
+  rating: number,
   bannerUrl: string;
   createdAt?: string;
 };
