@@ -74,6 +74,9 @@ export const BlogsPage = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-6">
+      <h1 className="text-2xl font-bold">
+        Blogs
+      </h1>
       {blogs.length > 0 && (
         <div className="space-y-4">
           {blogs.map((blog) => (
