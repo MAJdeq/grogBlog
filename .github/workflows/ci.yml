@@ -8,10 +8,6 @@ on:
 jobs:
   checks:
     runs-on: ubuntu-latest
-
-    container:
-      image: node:22
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
