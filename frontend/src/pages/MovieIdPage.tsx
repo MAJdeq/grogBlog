@@ -67,7 +67,7 @@ export const MovieIdPage = () => {
             {/* TEXT CONTENT */}
             <div className="flex-1">
               <h1 className="text-4xl font-bold mb-4 break-words">
-                {movie.title} | {movie.rating}
+                {movie.title} | {movie.rating}/10
               </h1>
 
               <div className="markdown prose max-w-none break-words overflow-hidden">
