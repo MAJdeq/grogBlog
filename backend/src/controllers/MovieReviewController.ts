@@ -103,7 +103,7 @@ export const edit_movie = async (req: Request, res: Response) => {
     // 2. Handle new banner upload
     if (newFile) {
       const oldFileKey = newMovie.bannerUrl.split("/").pop();
-      const newFileKey = `${crypto.randomUUID()}-${newFile.originalname}`;
+      const newFileKey = newFile.originalname;
 
       if (oldFileKey) {
         await s3.send(
