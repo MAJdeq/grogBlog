@@ -15,17 +15,45 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-
-      - name: Install Dependencies
+      
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          
+      - name: Install Frontend Dependencies
         run: |
           cd frontend
           npm install
-          cd ../backend
+          cd ..
+      
+      - name: Install Backend Dependencies
+        run: |
+          cd backend
           npm install
-
-      - name: Build frontend and backend
+          cd ..
+      
+      - name: Generate Prisma Client
+        run: |
+          cd backend
+          npx prisma generate
+          cd ..
+      
+      - name: Type Check Backend
+        run: |
+          cd backend
+          npx tsc --noEmit
+      
+      - name: Type Check Frontend
+        run: |
+          cd frontend
+          npx tsc --noEmit
+      - name: Build Frontend
         run: |
           cd frontend
           npm run build
-          cd ../backend
+      
+      - name: Build Backend
+        run: |
+          cd backend
           npm run build
