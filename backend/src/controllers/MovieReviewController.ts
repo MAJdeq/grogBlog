@@ -93,16 +93,16 @@ export const edit_movie = async (req: Request, res: Response) => {
     }
 
     // 1. Fetch existing movie
-    const newMovie = await movieService.getMovie(id);
-    if (!newMovie) {
+    const oldMovie = await movieService.getMovie(id);
+    if (!oldMovie) {
       return res.status(404).json({ message: "Movie not found" });
     }
 
-    let bannerUrl = newMovie.bannerUrl;
+    let bannerUrl = oldMovie.bannerUrl;
 
     // 2. Handle new banner upload
     if (newFile) {
-      const oldFileKey = newMovie.bannerUrl.split("/").pop();
+      const oldFileKey = oldMovie.bannerUrl.split("/").pop();
       const newFileKey = newFile.originalname;
 
       if (oldFileKey) {
