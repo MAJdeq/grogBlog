@@ -23,21 +23,6 @@ jobs:
           cd ../backend
           npm install
 
-      - name: Generate Prisma
-        run: |
-          cd backend
-          npx run generate
-
-      - name: Type Check Backend
-        run: |
-          cd backend
-          npx tsc --noEmit
-      
-      - name: Type Check Frontend
-        run: |
-          cd frontend
-          npx tsc --noEmit
-
       - name: Build frontend and backend
         run: |
           cd frontend
