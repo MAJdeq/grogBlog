@@ -52,20 +52,30 @@ export const BlogIdPage = () => {
 
   return (
     <>
-        <div>
-          <ArrowLeft 
-            onClick={() => navigate(-1)} // goes back to previous page
-            className="cursor-pointer"   // optional: show hand cursor
-          />
-        </div>
+        <ArrowLeft className="mb-4" onClick={() => navigate(-1)} />
         <div className="max-w-full px-4">
-            <h1 className="text-4xl font-bold mb-4 break-words">
-              {blog.title}
-            </h1>
-            <div className="markdown prose max-w-none break-words overflow-hidden">
+          <div className="flex gap-6 items-start md:flex-row flex-col">
+
+            {/* IMAGE */}
+            <img 
+              src={blog.bannerUrl} 
+              alt="" 
+              className="w-64 h-auto rounded-lg object-cover"
+            />
+
+            {/* TEXT CONTENT */}
+            <div className="flex-1">
+              <h1 className="text-4xl font-bold mb-4 break-words">
+                {blog.title}
+              </h1>
+
+              <div className="markdown prose max-w-none break-words overflow-hidden">
                 <Markdown>{blog.content}</Markdown>
+              </div>
             </div>
+          </div>
         </div>
+
 
     </>
   );
