@@ -26,6 +26,10 @@ export const NavLayout = () => {
       path: "blogs",
       name: "Blogs",
     },
+    {
+      path: "movie_reviews",
+      name: "Movie Reviews"
+    }
   ];
   const { authorized, setAuthorized } = useAdminStore();
   const apiUrl = import.meta.env.VITE_API_URL;
