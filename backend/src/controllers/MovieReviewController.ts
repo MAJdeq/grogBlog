@@ -61,12 +61,12 @@ export const delete_movie = async (req: Request, res: Response) => {
 
     // Extract the file key from URL
     const fileKey = movieUrl.split("/").pop(); // filename.png
-    if (!fileKey) return res.status(400).json({ message: "Invalid blog URL" });
+    if (!fileKey) return res.status(400).json({ message: "Invalid movie URL" });
 
     // Delete from R2
     await s3.send(
       new DeleteObjectCommand({
-        Bucket: "grog_blog_banners",
+        Bucket: "grog_movies_banners",
         Key: fileKey,
       })
     );
