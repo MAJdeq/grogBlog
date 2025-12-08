@@ -15,11 +15,12 @@ export const addMedia = async (title: string, content: string, rating: number, t
 };
 
 
-export const getMediaTypes = async () => {
-  const media = await prisma.mediaReview.findMany();
+export const getMediaTypes = async (type?: string) => {
+  return prisma.mediaReview.findMany({
+    where: type ? { type } : undefined,
+  });
+};
 
-  return media
-}
 
 export const getMediaType = async (id: string) => {
   const media = await prisma.mediaReview.findUnique({

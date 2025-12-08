@@ -43,12 +43,17 @@ export const add_media = async (req: Request, res: Response) => {
 
 export const get_media_types = async (req: Request, res: Response) => {
   try {
-    const media_types = await mediaService.getMediaTypes();
-    res.json({ media_types })
+    const { type } = req.body;
+
+    const media_types = await mediaService.getMediaTypes(type);
+
+    return res.json({ media_types });
   } catch (e: any) {
-    res.status(401).json({ message: e.message })
+    return res.status(500).json({ message: e.message });
   }
-}
+};
+
+
 
 export const get_media_type = async (req: Request, res: Response) => {
   try {

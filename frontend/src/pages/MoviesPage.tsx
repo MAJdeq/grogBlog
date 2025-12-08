@@ -27,13 +27,13 @@ export const MoviesPage = () => {
   const apiUrl = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
 
-  const handleDelete = async (id: string, movieUrl: string) => {
+  const handleDelete = async (id: string, mediaUrl: string) => {
     try {
       const response = await fetch(`${apiUrl}/media/delete_media_type/`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ id, movieUrl, type: type }),
+        body: JSON.stringify({ id, mediaUrl, type: type }),
       });
 
       if (!response.ok) {
@@ -57,6 +57,8 @@ export const MoviesPage = () => {
         const response = await fetch(`${apiUrl}/media/get_media_types`, {
           headers: { "Content-Type": "application/json" },
           credentials: "include",
+          method: "POST",
+          body: JSON.stringify({ type: type }),
         });
 
         if (!response.ok) {

@@ -29,7 +29,7 @@ export const GamesPage = () => {
 
   const handleDelete = async (id: string, mediaUrl: string) => {
     try {
-      const response = await fetch(`${apiUrl}/media/delete_media_type/`, {
+      const response = await fetch(`${apiUrl}/media/delete_media_type/?type="game"`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -56,7 +56,9 @@ export const GamesPage = () => {
       try {
         const response = await fetch(`${apiUrl}/media/get_media_types`, {
           headers: { "Content-Type": "application/json" },
+          method: "POST",
           credentials: "include",
+          body: JSON.stringify({ type: type }),
         });
 
         if (!response.ok) {
