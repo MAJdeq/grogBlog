@@ -136,14 +136,6 @@ export const NavLayout = () => {
             <span className="text-sm">
               &copy; {new Date().getFullYear()} GrogBlog. All rights reserved.
             </span>
-            <div className="flex space-x-4 mt-2 md:mt-0">
-              <a href="/about" className="hover:underline">
-                About
-              </a>
-              <a href="/contact" className="hover:underline">
-                Contact
-              </a>
-            </div>
           </div>
         </footer>
       </div>
