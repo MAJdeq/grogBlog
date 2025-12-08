@@ -3,7 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import authRoutes from "./routes/authRoutes";
 import blogRoutes from "./routes/blogRoutes";
-import movieRoutes from "./routes/movieRoutes";
+import movieRoutes from "./routes/mediaRoutes";
 
 const app = express();
 
@@ -25,7 +25,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use("/auth", authRoutes);
 app.use("/blogs", blogRoutes);
-app.use("/movies", movieRoutes);
+app.use("/media", movieRoutes);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server running on ${process.env.HOST}:${process.env.PORT}`);

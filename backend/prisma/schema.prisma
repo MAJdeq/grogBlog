@@ -24,9 +24,10 @@ model Blog {
   updatedAt    DateTime       @updatedAt
 }
 
-model MovieReview {
+model MediaReview {
   id        String   @id @default(uuid())
   title     String
+  type      String
   content   String
   rating    Int      
   bannerUrl String
