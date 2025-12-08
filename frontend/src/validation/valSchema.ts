@@ -17,7 +17,7 @@ export const blogFormSchema = z.object({
     .optional(),
 });
 
-export const movieFormSchema = z.object({
+export const mediaFormSchema = z.object({
   title: z.string().min(1),
   content: z.string().min(1),
     banner: z
@@ -25,4 +25,4 @@ export const movieFormSchema = z.object({
     .nullable()
     .optional(),
   rating: z.number().min(0).max(10),
-});
+  type: z.enum(["movie", "game"]),});

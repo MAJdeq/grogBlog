@@ -4,7 +4,7 @@ import Markdown from 'react-markdown';
 import { ArrowLeft } from "lucide-react";
 
 
-type Movie = {
+type Game = {
   id: number;
   title: string;
   content: string;
@@ -14,17 +14,17 @@ type Movie = {
   createdAt?: string;
 };
 
-export const MovieIdPage = () => {
+export const GameIdPage = () => {
 
   const { id } = useParams();
-  const [media, setMedia] = useState<Movie>()
+  const [media, setMedia] = useState<Game>()
   const navigate = useNavigate();
   
   const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     setMedia(undefined)
-    const fetchMovie = async () => {
+    const fetchGame = async () => {
       try {
         const response = await fetch(`${apiUrl}/media/get_media_type`, {
             method: "POST",
@@ -45,7 +45,7 @@ export const MovieIdPage = () => {
       }
     };
 
-    fetchMovie();
+    fetchGame();
   }, [id]);
 
   if (!media) {

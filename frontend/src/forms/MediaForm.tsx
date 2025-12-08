@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { movieFormSchema } from "@/validation/valSchema";
+import { mediaFormSchema } from "@/validation/valSchema";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,45 +8,48 @@ import { useNavigate } from "react-router-dom";
 import { Textarea } from "@/components/ui/textarea";
 import { useEffect } from "react";
 
-type Movie = {
+type Media = {
   id: string;
   title: string;
   content: string;
+  type: string;
   rating: number,
   bannerUrl: string;
   createdAt?: string;
 };
 
-type MovieFormProps = {
+type MediaFormProps = {
   mode?: "add" | "edit";
-  movie?: Movie | null;
-  onSuccess?: (updatedBlog: Movie) => void;
+  media?: Media | null;
+  type?: "movie" | "game";
+  onSuccess?: (updatedBlog: Media) => void;
 };
 
-export const MovieForm = ({ mode = "add", movie, onSuccess }: MovieFormProps) => {
+export const MediaForm = ({ mode = "add", type = "movie", media, onSuccess }: MediaFormProps) => {
   const navigate = useNavigate();
   const apiUrl = import.meta.env.VITE_API_URL;
 
-  const form = useForm<z.infer<typeof movieFormSchema>>({
-    resolver: zodResolver(movieFormSchema),
+  const form = useForm<z.infer<typeof mediaFormSchema>>({
+    resolver: zodResolver(mediaFormSchema),
     defaultValues: {
-      title: movie?.title ?? "",
-      rating: movie?.rating ?? undefined,
-      content: movie?.content ?? "",
+      title: media?.title ?? "",
+      rating: media?.rating ?? undefined,
+      content: media?.content ?? "",
+      type: type,
       banner: undefined,
     },
   });
 
   // Pre-fill fields when editing (important)
   useEffect(() => {
-    if (mode === "edit" && movie) {
-      form.setValue("title", movie.title);
-      form.setValue("content", movie.content);
-      form.setValue("rating", movie.rating);
+    if (mode === "edit" && media) {
+      form.setValue("title", media.title);
+      form.setValue("content", media.content);
+      form.setValue("rating", media.rating);
     }
-  }, [movie, mode, form]);
+  }, [media, mode, form]);
 
-  const onSubmit = async (values: z.infer<typeof movieFormSchema>) => {
+  const onSubmit = async (values: z.infer<typeof mediaFormSchema>) => {
     
     try {
       // Only require banner for adding
@@ -59,19 +62,20 @@ export const MovieForm = ({ mode = "add", movie, onSuccess }: MovieFormProps) =>
       formData.append("title", values.title);
       formData.append("rating", String(values.rating));
       formData.append("content", values.content);
+      formData.append("type", values.type)
       
       // Always append banner if it exists
       if (values.banner) {
         formData.append("banner", values.banner);
       }
       
-      if (mode === "edit" && movie) {
-        formData.append("id", movie.id);
+      if (mode === "edit" && media) {
+        formData.append("id", media.id);
       }
 
 
       const endpoint =
-        mode === "add" ? `${apiUrl}/movies/add_movie` : `${apiUrl}/movies/edit_movie`;
+        mode === "add" ? `${apiUrl}/media/add_media_type` : `${apiUrl}/media/edit_media_type`;
       const method: "POST" | "PUT" = mode === "add" ? "POST" : "PUT";
 
       const response = await fetch(endpoint, {
@@ -86,7 +90,7 @@ export const MovieForm = ({ mode = "add", movie, onSuccess }: MovieFormProps) =>
       const result = await response.json();
       
       if (mode === "add") navigate("/");
-      else onSuccess?.(result.updatedMovie);
+      else onSuccess?.(result.updatedMedia);
     } catch (err) {
       console.error("Movie form error:", err);
     }
@@ -127,7 +131,8 @@ export const MovieForm = ({ mode = "add", movie, onSuccess }: MovieFormProps) =>
           }}
         />
       </div>
-
+      
+      <Input type="hidden" {...form.register("type")}/>
       <Button type="submit" className="w-full">
         {mode === "add" ? "Add Movie" : "Save Changes"}
       </Button>

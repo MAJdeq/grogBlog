@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MediaForm } from "@/forms/MediaForm";
 
-type Movie = {
+type Game = {
   id: string;
   title: string;
   content: string;
@@ -15,25 +15,25 @@ type Movie = {
   createdAt?: string;
 };
 
-export const MoviesPage = () => {
+export const GamesPage = () => {
   const { authorized } = useAdminStore();
-  const [addMovieOpen, setAddMovieOpen] = useState(false);
-  const [editMovieOpen, setEditMovieOpen] = useState(false);
-  const [movieToEdit, setMovieToEdit] = useState<Movie | null>(null);
-  const type = "movie";
+  const [addGameOpen, setAddGameOpen] = useState(false);
+  const [editGameOpen, setEditGameOpen] = useState(false);
+  const [gameToEdit, setGameToEdit] = useState<Game | null>(null);
+  const type = "game";
 
-  const [movies, setMovies] = useState<Movie[]>([]);
+  const [games, setGames] = useState<Game[]>([]);
   
   const apiUrl = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
 
-  const handleDelete = async (id: string, movieUrl: string) => {
+  const handleDelete = async (id: string, mediaUrl: string) => {
     try {
       const response = await fetch(`${apiUrl}/media/delete_media_type/`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ id, movieUrl, type: type }),
+        body: JSON.stringify({ id, mediaUrl, type }),
       });
 
       if (!response.ok) {
@@ -42,7 +42,7 @@ export const MoviesPage = () => {
       }
 
       // <-- You need this to update the UI
-      setMovies((prev) => prev.filter((movie) => movie.id !== id));
+      setGames((prev) => prev.filter((game) => game.id !== id));
 
     } catch (err) {
       console.error("Network or auth check error: ", err);
@@ -52,7 +52,7 @@ export const MoviesPage = () => {
 
 
   useEffect(() => {
-    const fetchMovies = async () => {
+    const fetchGames = async () => {
       try {
         const response = await fetch(`${apiUrl}/media/get_media_types`, {
           headers: { "Content-Type": "application/json" },
@@ -65,39 +65,39 @@ export const MoviesPage = () => {
         }
 
         const data = await response.json();
-        setMovies(data.media_types);
+        setGames(data.media_types);
       } catch (err) {
         console.error("Network or auth check error:", err);
       }
     };
 
-    fetchMovies();
+    fetchGames();
   }, []);
   
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-6">
       <h1 className="text-2xl font-bold">
-        Movie Reviews
+        Game Reviews
       </h1>
-      {movies.length > 0 && (
+      {games.length > 0 && (
         <div className="space-y-4">
-          {movies.map((movie) => (
+          {games.map((game) => (
             <div
-              key={movie.id}
+              key={game.id}
               className="relative flex flex-col md:flex-row gap-4 p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow bg-white"
             >
               {/* Mobile Date (above image) */}
               <span className="block md:hidden text-xs text-gray-400 mb-2">
-                {movie.createdAt ? new Date(movie.createdAt).toLocaleDateString() : "No Date"}
+                {game.createdAt ? new Date(game.createdAt).toLocaleDateString() : "No Date"}
               </span>
 
 
               {/* Left Column (Image) */}
               <div className="flex-shrink-0 w-full md:w-48 h-48 md:h-32">
                 <img
-                  src={movie.bannerUrl}
-                  alt={movie.title}
+                  src={game.bannerUrl}
+                  alt={game.title}
                   className="w-full h-full object-cover rounded"
                 />
               </div>
@@ -106,13 +106,13 @@ export const MoviesPage = () => {
               <div className="flex-1 flex flex-col">
                 {/* Desktop Date (optional: can go next to title or above) */}
                 <span className="hidden md:block self-end text-xs text-gray-400 mb-1">
-                  {movie.createdAt ? new Date(movie.createdAt).toLocaleDateString() : "No Date"}
+                  {game.createdAt ? new Date(game.createdAt).toLocaleDateString() : "No Date"}
                 </span>
 
                 {/* Title + Author */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
                   <h2 className="text-xl font-semibold text-gray-900 break-words">
-                    {movie.title}
+                    {game.title}
                   </h2>
                 </div>
 
@@ -120,7 +120,7 @@ export const MoviesPage = () => {
                   <Button 
                     variant="outline"
                     size="sm"
-                    onClick={() => navigate(`/movie_reviews/${movie.id}`)}
+                    onClick={() => navigate(`/movie_reviews/${game.id}`)}
                   >
                     Open
                   </Button>
@@ -130,18 +130,18 @@ export const MoviesPage = () => {
                         variant="outline"
                         size="sm"
                         onClick={() => {
-                          setMovieToEdit(movie);
-                          setEditMovieOpen(true);
+                          setGameToEdit(game);
+                          setEditGameOpen(true);
                         }}
                       >
-                        Edit Movie
+                        Edit Game
                       </Button>
                       <Button 
                         variant="destructive"
                         size="sm"
-                        onClick={() => handleDelete(movie.id, movie.bannerUrl)}
+                        onClick={() => handleDelete(game.id, game.bannerUrl)}
                       >
-                        Delete Movie
+                        Delete Game
                       </Button>
                     </>
                   )}
@@ -156,45 +156,45 @@ export const MoviesPage = () => {
       {/* Add Blog Button (bottom of page) */}
       {authorized && (
         <div className="flex justify-center">
-          <Button onClick={() => setAddMovieOpen(true)}>Add Movie</Button>
+          <Button onClick={() => setAddGameOpen(true)}>Add Game</Button>
         </div>
       )}
 
       {/* Dialog */}
-      <Dialog open={addMovieOpen} onOpenChange={setAddMovieOpen}>
+      <Dialog open={addGameOpen} onOpenChange={setAddGameOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add a New Movie</DialogTitle>
+            <DialogTitle>Add a New Game</DialogTitle>
             <DialogDescription>
-              Fill out the form below to add a new movie
+              Fill out the form below to add a new game
             </DialogDescription>
           </DialogHeader>
 
-          <MediaForm />
+          <MediaForm type="game" />
         </DialogContent>
       </Dialog>
 
-      <Dialog open={editMovieOpen} onOpenChange={setEditMovieOpen}>
+      <Dialog open={editGameOpen} onOpenChange={setEditGameOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Edit a Movie</DialogTitle>
+            <DialogTitle>Edit a Game</DialogTitle>
             <DialogDescription>
-              Edit the form below to edit the movie
+              Edit the form below to edit the game
             </DialogDescription>
           </DialogHeader>
 
           <MediaForm
             mode="edit"
-            type="movie"
-            media={movieToEdit}
-            onSuccess={(updatedMovie: Movie) => {
+            type="game"
+            media={gameToEdit}
+            onSuccess={(updatedGame: Game) => {
               // update UI after edit
-              setMovies(prev =>
+              setGames(prev =>
                 prev.map((b) =>
-                  b.id === updatedMovie.id ? updatedMovie : b
+                  b.id === updatedGame.id ? updatedGame : b
                 )
               );
-              setEditMovieOpen(false);
+              setEditGameOpen(false);
             }}
           />
         </DialogContent>

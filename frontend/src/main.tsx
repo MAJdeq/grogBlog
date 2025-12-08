@@ -10,6 +10,8 @@ import { AdminForm } from "./forms/AdminForm.tsx";
 import { BlogIdPage } from "./pages/BlogIdPage.tsx";
 import { MoviesPage } from "./pages/MoviesPage.tsx";
 import { MovieIdPage } from "./pages/MovieIdPage.tsx"
+import { GamesPage } from "./pages/GamesPage.tsx";
+import { GameIdPage } from "./pages/GameIdPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -22,8 +24,10 @@ const router = createBrowserRouter([
           { index: true, element: <HomePage /> }, // <-- this is now the default
           { path: "blogs", element: <BlogsPage /> },
           { path: "blog/:id", element: <BlogIdPage />},
-          { path: "movie_reviews", element: <MoviesPage />},
-          { path: "movie_reviews/:id", element: <MovieIdPage />}
+          { path: "movie_reviews", element: <MoviesPage />}, 
+          { path: "movie_reviews/:id", element: <MovieIdPage />},
+          { path: "game_reviews", element: <GamesPage />}, 
+          { path: "game_reviews/:id", element: <GameIdPage />}
         ],
       },
     ],

@@ -29,6 +29,10 @@ export const NavLayout = () => {
     {
       path: "movie_reviews",
       name: "Movie Reviews"
+    },
+    {
+      path: "game_reviews",
+      name: "Game Reviews"
     }
   ];
   const { authorized, setAuthorized } = useAdminStore();
