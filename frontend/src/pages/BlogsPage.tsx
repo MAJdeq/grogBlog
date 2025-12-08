@@ -77,7 +77,7 @@ export const BlogsPage = () => {
       <h1 className="text-2xl font-bold">
         Blogs
       </h1>
-      {blogs.length > 0 && (
+      {blogs.length > 0 ? (
         <div className="space-y-4">
           {blogs.map((blog) => (
             <div
@@ -147,6 +147,10 @@ export const BlogsPage = () => {
 
             </div>
           ))}
+        </div>
+      ) : (
+        <div>
+          No blogs detected
         </div>
       )}
 

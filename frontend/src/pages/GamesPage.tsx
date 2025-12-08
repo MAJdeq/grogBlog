@@ -82,7 +82,7 @@ export const GamesPage = () => {
       <h1 className="text-2xl font-bold">
         Game Reviews
       </h1>
-      {games.length > 0 && (
+      {games.length > 0 ? (
         <div className="space-y-4">
           {games.map((game) => (
             <div
@@ -152,6 +152,10 @@ export const GamesPage = () => {
 
             </div>
           ))}
+        </div>
+      ) : (
+        <div>
+            No games detected
         </div>
       )}
 

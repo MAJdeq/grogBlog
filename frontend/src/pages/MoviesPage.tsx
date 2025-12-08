@@ -82,7 +82,7 @@ export const MoviesPage = () => {
       <h1 className="text-2xl font-bold">
         Movie Reviews
       </h1>
-      {movies.length > 0 && (
+      {movies.length > 0 ? (
         <div className="space-y-4">
           {movies.map((movie) => (
             <div
@@ -152,6 +152,10 @@ export const MoviesPage = () => {
 
             </div>
           ))}
+        </div>
+      ): (
+        <div>
+          No movie reviews detected
         </div>
       )}
 
