@@ -2,29 +2,20 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Markdown from 'react-markdown';
 import { ArrowLeft } from "lucide-react";
+import type { Media } from "@/validation/valSchema";
 
-
-type Game = {
-  id: number;
-  title: string;
-  content: string;
-  rating: number;
-  bannerUrl: string;
-  type: string;
-  createdAt?: string;
-};
 
 export const GameIdPage = () => {
 
   const { id } = useParams();
-  const [media, setMedia] = useState<Game>()
+  const [media, setMedia] = useState<Media>()
   const navigate = useNavigate();
   
   const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     setMedia(undefined)
-    const fetchGame = async () => {
+    const fetchMedia = async () => {
       try {
         const response = await fetch(`${apiUrl}/media/get_media_type`, {
             method: "POST",
@@ -45,7 +36,7 @@ export const GameIdPage = () => {
       }
     };
 
-    fetchGame();
+    fetchMedia();
   }, [id]);
 
   if (!media) {

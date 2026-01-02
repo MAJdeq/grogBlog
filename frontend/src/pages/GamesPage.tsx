@@ -122,7 +122,7 @@ export const GamesPage = () => {
                   <Button 
                     variant="outline"
                     size="sm"
-                    onClick={() => navigate(`/movie_reviews/${game.id}`)}
+                    onClick={() => navigate(`/game_reviews/${game.id}`)}
                   >
                     Open
                   </Button>
