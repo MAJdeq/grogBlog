@@ -8,10 +8,8 @@ import { HomePage } from "./pages/HomePage.tsx";
 import { DashLayout } from "./layouts/DashLayout.tsx";
 import { AdminForm } from "./forms/AdminForm.tsx";
 import { BlogIdPage } from "./pages/BlogIdPage.tsx";
-import { MoviesPage } from "./pages/MoviesPage.tsx";
-import { MovieIdPage } from "./pages/MovieIdPage.tsx"
-import { GamesPage } from "./pages/GamesPage.tsx";
-import { GameIdPage } from "./pages/GameIdPage.tsx";
+import { MediaListPage } from "./pages/MediaPage.tsx";
+import { MediaDetailPage } from "./pages/MediaIdPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -24,10 +22,10 @@ const router = createBrowserRouter([
           { index: true, element: <HomePage /> }, // <-- this is now the default
           { path: "blogs", element: <BlogsPage /> },
           { path: "blog/:id", element: <BlogIdPage />},
-          { path: "movie_reviews", element: <MoviesPage />}, 
-          { path: "movie_reviews/:id", element: <MovieIdPage />},
-          { path: "game_reviews", element: <GamesPage />}, 
-          { path: "game_reviews/:id", element: <GameIdPage />}
+          { path: "movie_reviews", element: <MediaListPage type = "movie" />}, 
+          { path: "movie_reviews/:id", element: <MediaDetailPage type="movie" />},
+          { path: "game_reviews", element: <MediaListPage type = "game"  />}, 
+          { path: "game_reviews/:id", element: <MediaDetailPage type="game" />}
         ],
       },
     ],

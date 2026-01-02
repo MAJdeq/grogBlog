@@ -26,3 +26,19 @@ export const mediaFormSchema = z.object({
     .optional(),
   rating: z.number().min(0).max(10),
   type: z.enum(["movie", "game"]),});
+
+
+  export type Media = {
+  id: string;
+  title: string;
+  content: string;
+  bannerUrl: string;
+  type: string;
+  rating: number,
+  createdAt?: string;
+};
+
+
+export interface MediaComponentProps {
+    type: "movie" | "game" | undefined;
+}
