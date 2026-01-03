@@ -3,20 +3,38 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 export const signIn = async (email: string, password: string) => {
-  const admin = await prisma.admin.findUnique({ where: { email } });
-  if (!admin) throw new Error("Invalid email or password");
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (!user) throw new Error("Invalid email or password");
 
-  const isValid = await bcrypt.compare(password, admin.password);
+  const isValid = await bcrypt.compare(password, user.password);
   if (!isValid) throw new Error("Invalid email or password");
 
   const token = jwt.sign(
-    { id: admin.id, email: admin.email },
+    { email: user.email, name: user.name, role: user.role, createdAt: user.createdAt },
     process.env.JWT_SECRET!,
     { expiresIn: "1h" }
   );
 
-  return { admin, token };
+  return { user, token };
 };
+
+export const signUp = async (email: string, name: string, password: string) => {
+  const user = await prisma.user.create({
+    data: {
+      email: email,
+      name: name,
+      password: password
+    }
+  })
+
+  const token = jwt.sign(
+    { email: user.email, name: user.name, role: user.role, createdAt: user.createdAt },
+    process.env.JWT_SECRET!,
+    { expiresIn: "1h" }
+  );
+
+  return { user, token }
+}
 
 export const signOut = async () => {
   return { success: true };

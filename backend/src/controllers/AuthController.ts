@@ -5,7 +5,7 @@ export const signIn = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   try {
-    const { admin, token } = await authService.signIn(email, password);
+    const { user, token } = await authService.signIn(email, password);
 
     res.cookie("token", token, {
       httpOnly: true,
@@ -16,13 +16,36 @@ export const signIn = async (req: Request, res: Response) => {
 
     res.json({
       message: "Signed in successfully",
-      user: { id: admin.id, email: admin.email, name: admin.name },
+      user: { id: user.id, role: user.role, email: user.email, name: user.name },
       token,
     });
   } catch (e: any) {
     res.status(401).json({ message: e.message });
   }
 };
+
+export const signUp = async (req: Request, res: Response) => {
+  const {email, name, password} = req.body;
+
+  try {
+    const { user, token } = await authService.signUp(email, name, password);
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      path: "/",
+    });
+
+    res.json({
+      message: "Signed in successfully",
+      user: { id: user.id, role: user.role, email: user.email, name: user.name },
+      token,
+    });
+  } catch (e: any) {
+    res.status(401).json({ message: e.message });
+  }
+}
 
 export const signOut = async (req: Request, res: Response) => {
   try {

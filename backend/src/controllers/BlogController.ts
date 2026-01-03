@@ -8,7 +8,7 @@ export const add_blog = async (req: Request, res: Response) => {
 
   try {
 
-    const { title, content } = req.body;
+    const { title, author, content } = req.body;
     const file = req.file;
     if (!file) return res.status(400).send("No file uploaded");
 
@@ -23,7 +23,7 @@ export const add_blog = async (req: Request, res: Response) => {
 
     const publicUrl = `${process.env.PUBLIC_URL}grog_blog_banners/${file.originalname}`
 
-    const { newBlog } = await blogService.addBlog(title, content, publicUrl)
+    const { newBlog } = await blogService.addBlog(title, author, content, publicUrl)
 
     res.json({ newBlog: newBlog })
     
