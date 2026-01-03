@@ -6,7 +6,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { BlogsPage } from "./pages/BlogsPage.tsx";
 import { HomePage } from "./pages/HomePage.tsx";
 import { DashLayout } from "./layouts/DashLayout.tsx";
-import { AdminForm } from "./forms/AdminForm.tsx";
+import { SignInForm } from "./forms/SignInForm.tsx";
+import { SignUpForm } from "./forms/SignUpForm.tsx";
 import { BlogIdPage } from "./pages/BlogIdPage.tsx";
 import { MediaListPage } from "./pages/MediaPage.tsx";
 import { MediaDetailPage } from "./pages/MediaIdPage.tsx";
@@ -30,7 +31,8 @@ const router = createBrowserRouter([
       },
     ],
   },
-  { path: "/admin_login", element: <AdminForm /> },
+  { path: "/sign_in", element: <SignInForm /> },
+  { path: "/sign_up", element: <SignUpForm />}
 ]);
 
 

@@ -3,6 +3,8 @@ import {
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
+  NavigationMenuTrigger,
+  NavigationMenuContent,
 } from "../components/ui/navigation-menu";
 import {
   DropdownMenu,
@@ -26,6 +28,8 @@ export const NavLayout = () => {
       path: "blogs",
       name: "Blogs",
     },
+  ];
+  const mediaLinks = [
     {
       path: "movie_reviews",
       name: "Movie Reviews"
@@ -34,8 +38,9 @@ export const NavLayout = () => {
       path: "game_reviews",
       name: "Game Reviews"
     }
-  ];
+  ]
   const { authorized, setAuthorized } = useAdminStore();
+  const { user, setUser } = useAdminStore();
   const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
@@ -54,7 +59,12 @@ export const NavLayout = () => {
 
         const data = await response.json();
         console.log("Authorized user:", data.user);
-        setAuthorized(true);
+
+        if (user.role == "ADMIN") {
+          setAuthorized(true);
+        }
+        
+        setUser(data.user)
       } catch (err) {
         console.error("Network or auth check error:", err);
         setAuthorized(false);
@@ -89,7 +99,7 @@ export const NavLayout = () => {
           <div className="flex">
             <nav className="hidden sm:flex items-center space-x-4">
               <NavigationMenu>
-                <NavigationMenuList className="flex space-x-4">
+                <NavigationMenuList className="flex-wrap">
                   {links.map((link, index) => (
                     <NavigationMenuItem key={index}>
                       <NavigationMenuLink asChild>
@@ -97,6 +107,19 @@ export const NavLayout = () => {
                       </NavigationMenuLink>
                     </NavigationMenuItem>
                   ))}
+
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger>Media</NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="sm:w-[400px] md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+                        {mediaLinks.map((link) => (
+                          <NavigationMenuLink asChild>
+                            <Link to={link.path}>{link.name}</Link>
+                          </NavigationMenuLink>
+                        ))}
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
                 </NavigationMenuList>
               </NavigationMenu>
 
@@ -118,11 +141,16 @@ export const NavLayout = () => {
                     </DropdownMenuItem>
                   ))}
                   {authorized && (
-                    <DropdownMenuItem>
-                      <Button onClick={handleLogout}>
-                        Logout
-                      </Button>
-                    </DropdownMenuItem>
+                    <>
+                      <div>
+                        { user.name }
+                      </div>
+                      <DropdownMenuItem>
+                        <Button onClick={handleLogout}>
+                          Logout
+                        </Button>
+                      </DropdownMenuItem>
+                    </>
                   )}
     
                 </DropdownMenuContent>
