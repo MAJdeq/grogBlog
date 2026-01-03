@@ -1,18 +1,18 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { adminFormSchema } from "@/validation/valSchema";
+import { signInForm } from "@/validation/valSchema";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { useAdminStore } from "@/stores/AuthStore";
 
-export const AdminForm = () => {
+export const SignInForm = () => {
   const navigate = useNavigate();
   const { authorized } = useAdminStore();
 
-  const form = useForm<z.infer<typeof adminFormSchema>>({
-    resolver: zodResolver(adminFormSchema),
+  const form = useForm<z.infer<typeof signInForm>>({
+    resolver: zodResolver(signInForm),
     defaultValues: {
       email: "",
       password: "",
@@ -21,7 +21,7 @@ export const AdminForm = () => {
 
   const apiUrl = import.meta.env.VITE_API_URL;
 
-  const onSubmit = async (values: z.infer<typeof adminFormSchema>) => {
+  const onSubmit = async (values: z.infer<typeof signInForm>) => {
     try {
       const response = await fetch(`${apiUrl}/auth/sign_in`, {
         method: "POST", // typically sign-in is POST
