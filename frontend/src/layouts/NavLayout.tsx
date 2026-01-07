@@ -3,6 +3,8 @@ import {
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
+  NavigationMenuTrigger,
+  NavigationMenuContent,
 } from "../components/ui/navigation-menu";
 import {
   DropdownMenu,
@@ -11,12 +13,16 @@ import {
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
 import { Menu } from "lucide-react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { useAdminStore } from "../stores/AuthStore";
+import { useUserStore } from "../stores/AuthStore";
 import { Button } from "../components/ui/button";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
+
+
 export const NavLayout = () => {
+  const {isAdmin} = useUserStore();
   const links = [
     {
       path: "/",
@@ -26,6 +32,16 @@ export const NavLayout = () => {
       path: "blogs",
       name: "Blogs",
     },
+  ];
+
+  if (isAdmin) {
+    links.push({
+      path: "dashboard",
+      name: "Dashboard"
+    })
+  }
+  
+  const mediaLinks = [
     {
       path: "movie_reviews",
       name: "Movie Reviews"
@@ -34,10 +50,11 @@ export const NavLayout = () => {
       path: "game_reviews",
       name: "Game Reviews"
     }
-  ];
-  const { authorized, setAuthorized } = useAdminStore();
+  ]
+  const navigate = useNavigate();
+  const { authorized, setAuthorized, setAdmin } = useUserStore();
+  const { user, setUser, isSubscriber, setSubscriber, setSubscriberToken, setAuthor } = useUserStore();
   const apiUrl = import.meta.env.VITE_API_URL;
-
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -54,7 +71,17 @@ export const NavLayout = () => {
 
         const data = await response.json();
         console.log("Authorized user:", data.user);
-        setAuthorized(true);
+
+        setAuthorized(true)
+
+        setUser(data.user);
+        console.log(data.user.role)
+        if (data.user.role === "ADMIN") {
+          setAdmin(true);
+        } else if (data.user.role === "AUTHOR") {
+          setAuthor(true);
+        }
+
       } catch (err) {
         console.error("Network or auth check error:", err);
         setAuthorized(false);
@@ -63,6 +90,36 @@ export const NavLayout = () => {
 
     checkAuth();
   }, [setAuthorized]);
+
+  const handleSubscriber = async () => {
+    try {
+      const response = await fetch(`${apiUrl}/subscribers/subscribe`, {
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        method: "POST",
+        body: JSON.stringify({ id: user.userId, email: user.email }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        toast.error(errorData.message || "Subscription failed.");
+        return;
+      }
+
+      const data = await response.json();
+
+      console.log(data);
+
+      setSubscriber(true);
+      setSubscriberToken(data.token);
+    
+      toast.success("You have successfully subscribed!");
+
+    } catch (err) {
+      console.error(err);
+      toast.error("Network error. Please try again.");
+    }
+  }
 
   const handleLogout = async () => {
     const response = await fetch(`${apiUrl}/auth/sign_out`, {
@@ -77,6 +134,14 @@ export const NavLayout = () => {
       console.error(`HTTP ERROR! status ${response.status}`);
     } else {
       setAuthorized(false);
+      setAdmin(false);
+      setUser({
+        email: "",
+        userId: "",
+        name: "",
+        role: ""
+      });
+      setAuthor(false);
     }
   };
 
@@ -89,7 +154,7 @@ export const NavLayout = () => {
           <div className="flex">
             <nav className="hidden sm:flex items-center space-x-4">
               <NavigationMenu>
-                <NavigationMenuList className="flex space-x-4">
+                <NavigationMenuList className="flex-wrap">
                   {links.map((link, index) => (
                     <NavigationMenuItem key={index}>
                       <NavigationMenuLink asChild>
@@ -97,11 +162,35 @@ export const NavLayout = () => {
                       </NavigationMenuLink>
                     </NavigationMenuItem>
                   ))}
+
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger>Media</NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="sm:w-[400px] md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+                        {mediaLinks.map((link) => (
+                          <NavigationMenuLink asChild>
+                            <Link to={link.path}>{link.name}</Link>
+                          </NavigationMenuLink>
+                        ))}
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
                 </NavigationMenuList>
               </NavigationMenu>
 
               {/* Logout button inline with links */}
-              {authorized && <Button onClick={handleLogout}>Logout</Button>}
+              {authorized ? (
+                <Button onClick={handleLogout}>Logout</Button>
+              ): (
+                <>
+                  <Button onClick={() => navigate("/sign_in")}>
+                    Login
+                  </Button>
+                  <Button onClick={() => navigate("/sign_up")}>
+                    Sign Up
+                  </Button>
+                </>
+              )}
             </nav>
 
             <div className="block md:hidden">
@@ -118,11 +207,13 @@ export const NavLayout = () => {
                     </DropdownMenuItem>
                   ))}
                   {authorized && (
-                    <DropdownMenuItem>
-                      <Button onClick={handleLogout}>
-                        Logout
-                      </Button>
-                    </DropdownMenuItem>
+                    <>
+                      <DropdownMenuItem>
+                        <Button onClick={handleLogout}>
+                          Logout
+                        </Button>
+                      </DropdownMenuItem>
+                    </>
                   )}
     
                 </DropdownMenuContent>
@@ -136,8 +227,19 @@ export const NavLayout = () => {
             <span className="text-sm">
               &copy; {new Date().getFullYear()} GrogBlog. All rights reserved.
             </span>
+
+            {authorized && !isSubscriber && (
+              <Button
+                className="bg-ring"
+                onClick={handleSubscriber}
+              >
+                Subscribe to Newsletter
+              </Button>
+            )}
           </div>
         </footer>
+
+
       </div>
     </>
   );

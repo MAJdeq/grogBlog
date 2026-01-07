@@ -4,8 +4,12 @@ import cookieParser from "cookie-parser";
 import authRoutes from "./routes/authRoutes";
 import blogRoutes from "./routes/blogRoutes";
 import movieRoutes from "./routes/mediaRoutes";
+import subscriberRoutes from "./routes/subscriberRoutes";
+import otpRoutes from "./routes/otpRoutes";
+import { limiter } from "./middleware/limiter";
 
 const app = express();
+
 
 const allowedOrigins = [
   process.env.FRONTEND_URL!,
@@ -21,12 +25,18 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
+
+
 app.use(express.json());
 app.use(cookieParser());
-app.use("/auth", authRoutes);
-app.use("/blogs", blogRoutes);
-app.use("/media", movieRoutes);
+app.use("/auth", limiter, authRoutes);
+app.use("/blogs", limiter, blogRoutes);
+app.use("/media", limiter, movieRoutes);
+app.use("/subscribers", limiter, subscriberRoutes);
+app.use("/otp", limiter, otpRoutes);
 
-app.listen(process.env.PORT, () => {
-  console.log(`Server running on ${process.env.HOST}:${process.env.PORT}`);
+const PORT = Number(process.env.PORT) || 3000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });

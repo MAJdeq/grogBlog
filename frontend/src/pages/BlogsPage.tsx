@@ -1,20 +1,22 @@
-import { useAdminStore } from "../stores/AuthStore";
+import { useUserStore } from "../stores/AuthStore";
 import { Button } from "../components/ui/button";
 import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription } from "../components/ui/dialog";
 import { useEffect, useState } from "react";
 import { BlogForm } from "../forms/BlogForm";
 import { useNavigate } from "react-router-dom";
+import { canEditBlog, canDeleteBlog, canAddBlog } from "@/permissions/permissions";
 
 type Blog = {
   id: string;
   title: string;
+  authorId: string;
   content: string;
   bannerUrl: string;
   createdAt?: string;
 };
 
 export const BlogsPage = () => {
-  const { authorized } = useAdminStore();
+  const store = useUserStore();
   const [addBlogOpen, setAddBlogOpen] = useState(false);
   const [editBlogOpen, setEditBlogOpen] = useState(false);
   const [blogToEdit, setBlogToEdit] = useState<Blog | null>(null);
@@ -121,7 +123,7 @@ export const BlogsPage = () => {
                   >
                     Open
                   </Button>
-                  {authorized && (
+                  {canEditBlog(store, blog) && canDeleteBlog(store, blog) && (
                     <>
                       <Button
                         variant="outline"
@@ -155,7 +157,7 @@ export const BlogsPage = () => {
       )}
 
       {/* Add Blog Button (bottom of page) */}
-      {authorized && (
+      {canAddBlog(store) && (
         <div className="flex justify-center">
           <Button onClick={() => setAddBlogOpen(true)}>Add Blog</Button>
         </div>
