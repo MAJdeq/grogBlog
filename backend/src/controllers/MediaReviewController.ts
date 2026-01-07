@@ -2,19 +2,30 @@ import type { Request, Response } from "express";
 import {s3} from "../lib/blob";
 import { PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import * as mediaService from "../services/MediaService";
+import { CreationNotis } from "../emails/emails";
+import jwt from "jsonwebtoken";
 
 
 export const add_media = async (req: Request, res: Response) => {
 
   try {
 
+    const token = req.cookies?.token;
+    
+    if (!token) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
     const { title, content, rating, type } = req.body;
     const file = req.file;
     const ratingNum = Number(rating);
     var bucket = ""
 
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string };
+    const authorId = decoded.userId;
+
     if (!file) return res.status(400).send("No file uploaded");
 
+    console.log(type)
     if (type == "movie") {
       bucket = "grog_movie_banners"
     } else {
@@ -32,7 +43,12 @@ export const add_media = async (req: Request, res: Response) => {
 
     const publicUrl = `${process.env.PUBLIC_URL}${bucket}/${file.originalname}`
 
-    const { newMedia } = await mediaService.addMedia(title, content, ratingNum, type, publicUrl)
+    const { newMedia } = await mediaService.addMedia(title, authorId, content, ratingNum, type, publicUrl)
+
+    console.log("calling creation notis")
+    CreationNotis(`${type} review`, title).catch(err => {
+      console.log("couldn't send emails out:", err)
+    });
 
     res.json({ newMedia: newMedia })
     
@@ -53,6 +69,49 @@ export const get_media_types = async (req: Request, res: Response) => {
   }
 };
 
+export const like = async (req: Request, res: Response) => {
+  try {
+    const { postId, userId, type  } = req.body;
+
+    const result = await mediaService.like(userId, postId, type);
+
+    if (result.liked) {
+      return res.status(200).json({ 
+        message: "Like was successful!" 
+      });
+    } else {
+      return res.status(200).json({ 
+        message: "Unlike was successful!" 
+      });
+    }
+  } catch (e: any) {
+    res.status(401).json({ message: e.message });
+  }
+}
+
+export const checkLike = async (req: Request, res: Response) => {
+  try {
+    const {postId, userId, type } = req.body;
+
+    const result = await mediaService.checkLike(userId, postId, type);
+
+    if (result.liked) {
+      return res.status(200).json({ 
+        liked: true,
+        likeCount: result.likedCount,
+        message: "You liked this!" 
+      });
+    } else {
+      return res.status(200).json({
+        liked: false,
+        likeCount: result.likedCount,
+        message: "You didn't like this"
+      })
+    }
+  } catch (e: any) {
+    return res.status(500).json({ message: e.message })
+  }
+}
 
 
 export const get_media_type = async (req: Request, res: Response) => {

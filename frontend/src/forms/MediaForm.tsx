@@ -5,9 +5,9 @@ import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
-import { Textarea } from "@/components/ui/textarea";
 import { useEffect } from "react";
-
+import { Textarea } from "@/components/ui/textarea";
+import { capitalizeFirstLetter } from "@/lib/utils";
 type Media = {
   id: string;
   title: string;
@@ -25,7 +25,7 @@ type MediaFormProps = {
   onSuccess?: (updatedBlog: Media) => void;
 };
 
-export const MediaForm = ({ mode = "add", type = "movie", media, onSuccess }: MediaFormProps) => {
+export const MediaForm = ({ mode = "add", type, media, onSuccess }: MediaFormProps) => {
   const navigate = useNavigate();
   const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -33,7 +33,7 @@ export const MediaForm = ({ mode = "add", type = "movie", media, onSuccess }: Me
     resolver: zodResolver(mediaFormSchema),
     defaultValues: {
       title: media?.title ?? "",
-      rating: media?.rating ?? undefined,
+      rating: media?.rating ?? undefined, 
       content: media?.content ?? "",
       type: type,
       banner: undefined,
@@ -96,6 +96,13 @@ export const MediaForm = ({ mode = "add", type = "movie", media, onSuccess }: Me
     }
   };
 
+  useEffect(() => {
+    if (type) {
+      form.setValue("type", type);
+    }
+  }, [type, form]);
+
+
   return (
   <div className="flex items-center justify-center p-4">
     <form onSubmit={form.handleSubmit(onSubmit)} className="w-full max-w-2xl space-y-4">
@@ -109,7 +116,7 @@ export const MediaForm = ({ mode = "add", type = "movie", media, onSuccess }: Me
         required
         />
 
-      <Textarea placeholder="Content" {...form.register("content")} required />
+      <Textarea {...form.register("content")} />
       
       {/* Styled File Upload */}
       <div className="space-y-2">
@@ -134,7 +141,7 @@ export const MediaForm = ({ mode = "add", type = "movie", media, onSuccess }: Me
       
       <Input type="hidden" {...form.register("type")}/>
       <Button type="submit" className="w-full">
-        {mode === "add" ? "Add Movie" : "Save Changes"}
+        {mode === "add" ? `Add ${capitalizeFirstLetter(type)}` : "Save Changes"}
       </Button>
     </form>
   </div>

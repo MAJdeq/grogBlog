@@ -69,9 +69,7 @@ export const BlogIdPage = () => {
                 {blog.title}
               </h1>
 
-              <div className="markdown prose max-w-none break-words overflow-hidden">
-                <Markdown>{blog.content}</Markdown>
-              </div>
+              <Markdown>{blog.content}</Markdown>
             </div>
           </div>
         </div>

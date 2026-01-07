@@ -7,9 +7,21 @@ const name = process.env.ADMIN_NAME!;
 
 async function main() {
   // Check if admin exists
-  const existing = await prisma.admin.findUnique({ where: { email } });
+  const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) {
-    console.log(`✅ Admin already exists: ${email}`);
+    console.log(`✅ User exists: ${email}`);
+
+    if (existing.role != "ADMIN"){
+      const updateUser = await prisma.user.update({
+        where: {
+          email: existing.email,
+        },
+        data: {
+          role: "ADMIN",
+        },
+      })
+      console.log(`Updated user: ${updateUser}`)
+    }
     return;
   }
 
@@ -17,10 +29,11 @@ async function main() {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   // Create admin
-  const admin = await prisma.admin.create({
+  const admin = await prisma.user.create({
     data: {
       email,
       password: hashedPassword,
+      role: "ADMIN",
       name,
     },
   });

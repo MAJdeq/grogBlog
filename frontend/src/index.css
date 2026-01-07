@@ -136,3 +136,20 @@
 .markdown li {
   margin: 0.5rem 0;
 }
+
+
+#content ol {
+    list-style-type: decimal;
+    padding-left: 2em; /* or 40px */
+    margin: 1em 0;
+}
+
+#content ul {
+    list-style-type: disc;
+    padding-left: 2em;
+    margin: 1em 0;
+}
+
+#content li {
+    display: list-item;
+}
