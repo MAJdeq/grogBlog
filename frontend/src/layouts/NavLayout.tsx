@@ -22,7 +22,7 @@ import { toast } from "sonner";
 
 
 export const NavLayout = () => {
-  const {isAdmin} = useUserStore();
+  const {isAdmin, isSuperAdmin} = useUserStore();
   const links = [
     {
       path: "/",
@@ -34,7 +34,7 @@ export const NavLayout = () => {
     },
   ];
 
-  if (isAdmin) {
+  if (isAdmin || isSuperAdmin) {
     links.push({
       path: "dashboard",
       name: "Dashboard"
@@ -53,7 +53,7 @@ export const NavLayout = () => {
   ]
   const navigate = useNavigate();
   const { authorized, setAuthorized, setAdmin } = useUserStore();
-  const { user, setUser, isSubscriber, setSubscriber, setSubscriberToken, setAuthor } = useUserStore();
+  const { user, setUser, isSubscriber, setSubscriber, setSubscriberToken, setAuthor, setSuperAdmin } = useUserStore();
   const apiUrl = import.meta.env.VITE_API_URL;
   useEffect(() => {
     const checkAuth = async () => {
@@ -76,7 +76,9 @@ export const NavLayout = () => {
 
         setUser(data.user);
         console.log(data.user.role)
-        if (data.user.role === "ADMIN") {
+        if (data.user.role === "SUPERADMIN") {
+          setSuperAdmin(true);
+        } else if (data.user.role === "ADMIN") {
           setAdmin(true);
         } else if (data.user.role === "AUTHOR") {
           setAuthor(true);
@@ -93,7 +95,7 @@ export const NavLayout = () => {
 
   const handleSubscriber = async () => {
     try {
-      const response = await fetch(`${apiUrl}/subscribers/subscribe`, {
+      const response = await fetch(`${apiUrl}/users/subscribe`, {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         method: "POST",
@@ -135,6 +137,7 @@ export const NavLayout = () => {
     } else {
       setAuthorized(false);
       setAdmin(false);
+      setSuperAdmin(false);
       setUser({
         email: "",
         userId: "",

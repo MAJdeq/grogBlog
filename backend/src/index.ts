@@ -4,7 +4,7 @@ import cookieParser from "cookie-parser";
 import authRoutes from "./routes/authRoutes";
 import blogRoutes from "./routes/blogRoutes";
 import movieRoutes from "./routes/mediaRoutes";
-import subscriberRoutes from "./routes/subscriberRoutes";
+import userRoutes from "./routes/userRoutes";
 import otpRoutes from "./routes/otpRoutes";
 import { limiter } from "./middleware/limiter";
 
@@ -32,7 +32,7 @@ app.use(cookieParser());
 app.use("/auth", limiter, authRoutes);
 app.use("/blogs", limiter, blogRoutes);
 app.use("/media", limiter, movieRoutes);
-app.use("/subscribers", limiter, subscriberRoutes);
+app.use("/users", limiter, userRoutes);
 app.use("/otp", limiter, otpRoutes);
 
 const PORT = Number(process.env.PORT) || 3000;

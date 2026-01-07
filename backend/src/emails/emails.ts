@@ -1,4 +1,4 @@
-import { getSubscribers } from "../services/SubscriberService";
+import { getSubscribers } from "../services/UserService";
 import { resend } from "./resend";
 
 export const CreationNotis = async (ctx: string, itemTitle: string) => {

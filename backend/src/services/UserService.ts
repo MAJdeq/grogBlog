@@ -1,6 +1,6 @@
+import { Role } from "@prisma/client";
 import { prisma } from "../lib/db";
 import jwt from "jsonwebtoken";
-
 export const getSubscribers = async () => {
   const subscribers = await prisma.user.findMany({
     where: {
@@ -16,6 +16,51 @@ export const getSubscribers = async () => {
 
   return { subscribers }
 }
+
+export const updateUserRole = async (userId: string, role: Role) => {
+  return await prisma.user.update({
+    where: { id: userId },
+    data: { role },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true
+    }
+  });
+};
+
+export const getUsers = async (cursor: string | undefined, limit: number) => {
+  const users = await prisma.user.findMany({
+    take: limit,
+    ...(cursor && {
+      skip: 1,
+      cursor: {
+        id: cursor // Use id instead of createdAt
+      }
+    }),
+    orderBy: {
+      createdAt: 'desc'
+    },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      createdAt: true
+    }
+  });
+  
+  // Use id as the next cursor
+  const nextCursor = users.length === limit && users.length > 0
+    ? users[users.length - 1].id
+    : null;
+  
+  return {
+    users,
+    nextCursor
+  };
+};
 
 export const unsubscribe = async (token: string) => {
   // Find user by token

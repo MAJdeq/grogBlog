@@ -13,6 +13,7 @@ export interface UserState {
   authorized: boolean;
   user: User;
   isAdmin: boolean;
+  isSuperAdmin: boolean;
   isAuthor: boolean;
   isSubscriber: boolean;
   subscriberToken: string;
@@ -20,6 +21,7 @@ export interface UserState {
   setSubscriberToken: (val: string) => void;
   setUser: (userData: User) => void;
   setAdmin: (val: boolean) => void;
+  setSuperAdmin: (val: boolean) => void;
   setAuthor: (val: boolean) => void;
   setAuthorized: (val: boolean) => void;
 }
@@ -36,12 +38,14 @@ export const useUserStore = create<UserState>()(
         role: "",
       },
       isAdmin: false,
+      isSuperAdmin: false,
       isSubscriber: false,
       isAuthor: false,
       setSubscriber: (val: boolean) => set({ isSubscriber: val }),
       subscriberToken: "",
       setSubscriberToken: (val: string) => set({ subscriberToken: val}),
       setAdmin: (val: boolean) => set({ isAdmin: val}),
+      setSuperAdmin: (val: boolean) => set({ isSuperAdmin: val}),
       setUser: (userData: User) => set({ user: userData}),
       setAuthor: (val: boolean) => set({ isAuthor: val }),
       setAuthorized: (val: boolean) => set({ authorized: val }),
