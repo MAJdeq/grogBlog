@@ -5,7 +5,6 @@ import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
-import { WordText } from "@/components/ui/shared/WordText";
 import { useEffect } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { capitalizeFirstLetter } from "@/lib/utils";
