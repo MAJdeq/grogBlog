@@ -68,7 +68,6 @@ export const mediaFormSchema = z.object({
   content: string;
   bannerUrl: string;
   type: string;
-  likes: number,
   rating: number,
   createdAt?: string;
 };

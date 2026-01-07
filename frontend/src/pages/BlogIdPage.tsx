@@ -69,10 +69,7 @@ export const BlogIdPage = () => {
                 {blog.title}
               </h1>
 
-              <div 
-                className="prose prose-lg max-w-none"
-                dangerouslySetInnerHTML={{ __html: blog.content }}
-              />
+              <Markdown>{blog.content}</Markdown>
             </div>
           </div>
         </div>
