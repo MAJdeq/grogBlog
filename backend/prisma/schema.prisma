@@ -7,14 +7,17 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid()) // UUID primary key
-  email     String   @unique // login email
-  name      String? // optional name
-  password  String // hashed password
-  createdAt DateTime @default(now())
-  role      Role     @default(USER)
-  updatedAt DateTime @updatedAt
-  blogs     Blog[]
+  id              String   @id @default(uuid()) // UUID primary key
+  email           String   @unique // login email
+  name            String? // optional name
+  password        String // hashed password
+  createdAt       DateTime @default(now())
+  role            Role     @default(USER)
+  updatedAt       DateTime @updatedAt
+  blogs           Blog[]
+  isSubscriber    Boolean  @default(false)
+  subscriberToken String?  @unique
+  likes           Like[]
 }
 
 model Blog {
@@ -28,6 +31,18 @@ model Blog {
   updatedAt DateTime @updatedAt
 }
 
+model Like {
+  id        String   @id @default(cuid())
+  userId    String
+  itemId    String // ID of the blog OR media
+  itemType  String // "blog" or "media"
+  createdAt DateTime @default(now())
+
+  user   User    @relation(fields: [userId], references: [id])
+
+  @@unique([userId, itemId, itemType]) // prevent double-likes per user per item
+}
+
 model MediaReview {
   id        String   @id @default(uuid())
   title     String
@@ -39,7 +54,20 @@ model MediaReview {
   updatedAt DateTime @updatedAt
 }
 
+model OTP {
+  id          String   @id @default(uuid())
+  email       String // Use email instead of userId
+  otp_hash    String
+  purpose     String // 'password_reset', 'email_verification', '2fa', etc.
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+  attempts    Int      @default(0)
+  maxAttempts Int      @default(3)
+  is_used     Boolean  @default(false)
+}
+
 enum Role {
   USER
   ADMIN
+  AUTHOR
 }
