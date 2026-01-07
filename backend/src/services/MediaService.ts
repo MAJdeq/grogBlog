@@ -18,7 +18,19 @@ export const addMedia = async (title: string, authorId: string, content: string,
 
 export const getMediaTypes = async (type?: string) => {
   return prisma.mediaReview.findMany({
+    include: {
+      author: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        }
+      }
+    },
     where: type ? { type } : undefined,
+    orderBy: {
+      createdAt: 'desc'
+    }
   });
 };
 
@@ -68,8 +80,15 @@ export const checkLike = async (id: string, blogId: string, type: string) => {
 
 export const getMediaType = async (id: string) => {
   const media = await prisma.mediaReview.findUnique({
-    where: {
-      id: id
+    where: { id },
+    include: {
+      author: {
+        select: {
+          id: true,
+          name: true,
+          email: true
+        }
+      }
     }
   })
 

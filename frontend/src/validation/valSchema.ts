@@ -70,8 +70,27 @@ export const mediaFormSchema = z.object({
   type: string;
   rating: number,
   createdAt?: string;
+  author?: {  // Add this
+    id: string;
+    name: string;
+    email: string;
+  };
+  
 };
 
+export type Blog = {
+  id: string;
+  title: string;
+  authorId: string;
+  content: string;
+  bannerUrl: string;
+  createdAt?: string;
+  author?: {  // Add this
+    id: string;
+    name: string;
+    email: string;
+  };
+};
 
 export interface MediaComponentProps {
     type: "movie" | "game" | undefined;

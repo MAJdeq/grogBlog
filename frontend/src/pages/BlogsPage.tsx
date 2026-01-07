@@ -5,15 +5,7 @@ import { useEffect, useState } from "react";
 import { BlogForm } from "../forms/BlogForm";
 import { useNavigate } from "react-router-dom";
 import { canEditBlog, canDeleteBlog, canAddBlog } from "@/permissions/permissions";
-
-type Blog = {
-  id: string;
-  title: string;
-  authorId: string;
-  content: string;
-  bannerUrl: string;
-  createdAt?: string;
-};
+import type { Blog } from "@/validation/valSchema";
 
 export const BlogsPage = () => {
   const store = useUserStore();
@@ -71,6 +63,8 @@ export const BlogsPage = () => {
     };
 
     fetchBlogs();
+
+    console.log(blogs);
   }, []);
   
 
@@ -109,10 +103,15 @@ export const BlogsPage = () => {
                 </span>
 
                 {/* Title + Author */}
-                <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
-                  <h2 className="text-xl font-semibold text-gray-900 break-words">
-                    {blog.title}
-                  </h2>
+                <div className="flex flex-col">
+                    <h2 className="text-xl font-semibold text-gray-900 break-words">
+                      {blog.title}
+                    </h2>
+                    {blog?.author?.name && (
+                      <p className="text-sm text-gray-500 mt-1">
+                        By {blog.author.name}
+                      </p>
+                    )}
                 </div>
 
                 <div className="flex flex-wrap gap-2 mt-auto pt-4">

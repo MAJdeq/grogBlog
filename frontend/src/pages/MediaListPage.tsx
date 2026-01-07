@@ -12,7 +12,7 @@ type MediaListPageProps = {
 };
 
 export const MediaListPage = ({ type }: MediaListPageProps) => {
-  const { isAdmin } = useUserStore();
+  const { isAdmin, isSuperAdmin } = useUserStore();
   const [media, setMedia] = useState<Media[]>([]);
   const [addOpen, setAddOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
@@ -59,6 +59,11 @@ export const MediaListPage = ({ type }: MediaListPageProps) => {
 
           <div className="flex-1 flex flex-col">
             <h2 className="text-xl font-semibold">{m.title}</h2>
+            {m?.author?.name && (
+                      <p className="text-sm text-gray-500 mt-1">
+                        By {m.author.name}
+                      </p>
+                    )}
 
             <div className="mt-auto flex gap-2">
               <Button
@@ -96,7 +101,7 @@ export const MediaListPage = ({ type }: MediaListPageProps) => {
         </div>
       ))}
 
-      {isAdmin && (
+      {isAdmin || isSuperAdmin && (
         <>
           <div className="flex justify-center">
             <Button onClick={() => setAddOpen(true)}>Add {label}</Button>

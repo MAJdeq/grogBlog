@@ -29,20 +29,36 @@ export const addBlog = async (
 };
 
 export const getBlogs = async () => {
-  const blogs = await prisma.blog.findMany();
-
-  return blogs
-}
+  return await prisma.blog.findMany({
+    include: {
+      author: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        }
+      }
+    },
+    orderBy: {
+      createdAt: 'desc'
+    }
+  });
+};
 
 export const getBlog = async (id: string) => {
-  const blog = await prisma.blog.findUnique({
-    where: {
-      id: id
+  return await prisma.blog.findUnique({
+    where: { id },
+    include: {
+      author: {
+        select: {
+          id: true,
+          name: true,
+          email: true
+        }
+      }
     }
-  })
-
-  return blog
-}
+  });
+};
 
 export const deleteBlog = async (id: string) => {
   if (!id) throw new Error("Invalid blog ID");
