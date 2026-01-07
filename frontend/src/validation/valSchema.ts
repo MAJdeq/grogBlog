@@ -1,19 +1,45 @@
 import * as z from "zod";
 
 export const signInForm = z.object({
-  email: z.email(),
+  email: z.string().email({ message: "Invalid email address" }),  
   password: z
     .string()
     .min(8, { message: "Password must be at least 8 characters long." }),
 });
 
 export const signUpForm = z.object({
-  email: z.email(),
-  name: z.string(),
+  email: z.string().email({ message: "Invalid email address" }),  
+  name: z
+    .string()
+    .min(2, "Name must be at least 2 characters")
+    .max(50, "Name must be at most 50 characters")
+    .regex(/^[a-zA-Z\s'-]+$/, "Name can only contain letters, spaces, hyphens, or apostrophes"),
   password: z
     .string()
     .min(8, { message: "Password must be at least 8 characters long." }),
+  isSubscriber: z.boolean()
 });
+
+export const requestOtpForm = z.object({
+  email: z.string().email({ message: "Invalid email address" })
+})
+
+export const verifyOtpForm = z.object({
+  otp: z
+    .string()
+    .length(6, "OTP must be exactly 6 digits") // enforce 6 characters
+    .regex(/^\d+$/, "OTP must only contain numbers"), // optional: ensure only digits
+});
+
+export const resetPassword = z
+  .object({
+    password: z.string().min(6, "Password must be at least 6 characters"),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords must match",  // <-- updated message
+    path: ["confirmPassword"],        // points the error to confirmPassword field
+  });
 
 
 export const blogFormSchema = z.object({
@@ -42,6 +68,7 @@ export const mediaFormSchema = z.object({
   content: string;
   bannerUrl: string;
   type: string;
+  likes: number,
   rating: number,
   createdAt?: string;
 };

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAdminStore } from "@/stores/AuthStore";
+import { useUserStore } from "@/stores/AuthStore";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { MediaForm } from "@/forms/MediaForm";
@@ -12,7 +12,7 @@ type MediaListPageProps = {
 };
 
 export const MediaListPage = ({ type }: MediaListPageProps) => {
-  const { authorized } = useAdminStore();
+  const { isAdmin } = useUserStore();
   const [media, setMedia] = useState<Media[]>([]);
   const [addOpen, setAddOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
@@ -69,7 +69,7 @@ export const MediaListPage = ({ type }: MediaListPageProps) => {
                 Open
               </Button>
 
-              {authorized && (
+              {isAdmin && (
                 <>
                   <Button
                     size="sm"
@@ -96,41 +96,44 @@ export const MediaListPage = ({ type }: MediaListPageProps) => {
         </div>
       ))}
 
-      {authorized && (
-        <div className="flex justify-center">
-          <Button onClick={() => setAddOpen(true)}>Add {label}</Button>
-        </div>
-      )}
+      {isAdmin && (
+        <>
+          <div className="flex justify-center">
+            <Button onClick={() => setAddOpen(true)}>Add {label}</Button>
+          </div>
 
-      {/* Add */}
-      <Dialog open={addOpen} onOpenChange={setAddOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add {label}</DialogTitle>
-          </DialogHeader>
-          <MediaForm type={type} />
-        </DialogContent>
-      </Dialog>
+          {/* Add */}
+          <Dialog open={addOpen} onOpenChange={setAddOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Add {label}</DialogTitle>
+              </DialogHeader>
+              <MediaForm type={type} />
+            </DialogContent>
+          </Dialog>
 
-      {/* Edit */}
-      <Dialog open={editOpen} onOpenChange={setEditOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit {label}</DialogTitle>
-          </DialogHeader>
-          <MediaForm
-            mode="edit"
-            type={type}
-            media={mediaToEdit}
-            onSuccess={(updated) => {
-              setMedia(prev =>
-                prev.map(m => m.id === updated.id ? updated : m)
-              );
-              setEditOpen(false);
-            }}
-          />
-        </DialogContent>
-      </Dialog>
+          {/* Edit */}
+          <Dialog open={editOpen} onOpenChange={setEditOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Edit {label}</DialogTitle>
+              </DialogHeader>
+              <MediaForm
+                mode="edit"
+                type={type}
+                media={mediaToEdit}
+                onSuccess={(updated) => {
+                  setMedia(prev =>
+                    prev.map(m => m.id === updated.id ? updated : m)
+                  );
+                  setEditOpen(false);
+                }}
+              />
+            </DialogContent>
+          </Dialog>
+          </>
+        )}
+
     </div>
   );
 };
