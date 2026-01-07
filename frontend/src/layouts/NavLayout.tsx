@@ -209,15 +209,25 @@ export const NavLayout = () => {
                       </Link>
                     </DropdownMenuItem>
                   ))}
-                  {authorized && (
-                    <>
-                      <DropdownMenuItem>
-                        <Button onClick={handleLogout}>
-                          Logout
+                  {mediaLinks.map((link, index) => (
+                    <DropdownMenuItem key={index}>
+                      <Link to={link.path} className="block w-full">
+                        {link.name}
+                      </Link>
+                    </DropdownMenuItem>
+                  ))}
+                  {authorized ? (
+                      <Button onClick={handleLogout}>Logout</Button>
+                    ): (
+                      <>
+                        <Button onClick={() => navigate("/sign_in")}>
+                          Login
                         </Button>
-                      </DropdownMenuItem>
-                    </>
-                  )}
+                        <Button onClick={() => navigate("/sign_up")}>
+                          Sign Up
+                        </Button>
+                      </>
+                    )}
     
                 </DropdownMenuContent>
               </DropdownMenu>
