@@ -6,29 +6,34 @@
 
 */
 -- CreateEnum
-CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN');
+-- 1. Create enum "Role" if it doesn't exist
+DO $$
+BEGIN
+   IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'role') THEN
+      CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN');
+   END IF;
+END
+$$;
 
--- AlterTable
-ALTER TABLE "Blog" ADD COLUMN     "authorId" TEXT NOT NULL;
-
--- DropTable
-DROP TABLE "Admin";
-
--- CreateTable
-CREATE TABLE "User" (
-    "id" TEXT NOT NULL,
-    "email" TEXT NOT NULL,
+-- 2. Create User table if it doesn't exist
+CREATE TABLE IF NOT EXISTS "User" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "email" TEXT NOT NULL UNIQUE,
     "name" TEXT,
     "password" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "role" "Role" NOT NULL DEFAULT 'USER',
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- CreateIndex
-CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+-- 3. Add authorId column to Blog as nullable
+ALTER TABLE "Blog" ADD COLUMN IF NOT EXISTS "authorId" TEXT;
 
--- AddForeignKey
-ALTER TABLE "Blog" ADD CONSTRAINT "Blog_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+-- 4. Add foreign key to authorId (nullable columns are allowed)
+ALTER TABLE "Blog"
+ADD CONSTRAINT IF NOT EXISTS "Blog_authorId_fkey"
+FOREIGN KEY ("authorId") REFERENCES "User"("id")
+ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- 5. Drop Admin table safely if it exists
+DROP TABLE IF EXISTS "Admin";
