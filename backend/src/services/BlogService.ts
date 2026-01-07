@@ -1,20 +1,31 @@
 import { prisma } from "../lib/db";
 
-export const addBlog = async (title: string, authorId: string, content: string, bannerUrl: string) => {
+
+export const addBlog = async (
+  title: string, 
+  authorId: string, 
+  content: string, 
+  bannerUrl: string
+) => {
   const newBlog = await prisma.blog.create({
     data: {
-        title,
-        author: {
-          connect: {
-            id: authorId
-          }
-        },
-        content,
-        bannerUrl
+      title,
+      content,
+      bannerUrl,
+      authorId, // This connects the blog to the user
+    },
+    include: {
+      author: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        }
+      }
     }
-  })
-
-  return { newBlog }
+  });
+  
+  return { newBlog };
 };
 
 export const getBlogs = async () => {

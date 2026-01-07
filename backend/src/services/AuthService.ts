@@ -10,7 +10,7 @@ export const signIn = async (email: string, password: string) => {
   if (!isValid) throw new Error("Invalid email or password");
 
   const token = jwt.sign(
-    { email: user.email, name: user.name, role: user.role, createdAt: user.createdAt },
+    { userId: user.id, email: user.email, name: user.name, role: user.role, createdAt: user.createdAt },
     process.env.JWT_SECRET!,
     { expiresIn: "1h" }
   );
@@ -18,22 +18,37 @@ export const signIn = async (email: string, password: string) => {
   return { user, token };
 };
 
-export const signUp = async (email: string, name: string, password: string) => {
+export const signUp = async (email: string, name: string, password: string, isSubscriber: boolean) => {
+
+  const userExists = await prisma.user.findUnique({ where: { email } });
+  if (userExists) {
+    throw new Error("A user with this email already exists!");
+  }
+
+  const newPassword = await hashPassword(password);
+
   const user = await prisma.user.create({
     data: {
       email: email,
       name: name,
-      password: password
+      password: newPassword,
+      isSubscriber: isSubscriber
     }
   })
 
   const token = jwt.sign(
-    { email: user.email, name: user.name, role: user.role, createdAt: user.createdAt },
+    { userId: user.id, email: user.email, name: user.name, role: user.role, createdAt: user.createdAt },
     process.env.JWT_SECRET!,
     { expiresIn: "1h" }
   );
 
   return { user, token }
+}
+
+const hashPassword = async (password: string) => {
+  const salt = await bcrypt.genSalt(10);
+  const hash = await bcrypt.hash(password, salt)
+  return hash;
 }
 
 export const signOut = async () => {
@@ -51,3 +66,23 @@ export const me = async (token: string) => {
     throw new Error("Invalid token"); // controller will catch this
   }
 };
+
+export const resetPassword = async (password: string, resetToken: string) => {
+    const payload = jwt.verify(resetToken, process.env.JWT_SECRET!) as {
+        userId: string;
+        purpose: string;
+    };
+
+    console.log(payload)
+    if (payload.purpose !== "request_password") {
+      throw new Error("Invalid token purpose")
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await prisma.user.update({
+      where: {id: payload.userId},
+      data: { password: hashedPassword}
+    })
+    return { success: true, message: "Password reset successfully" };
+}
