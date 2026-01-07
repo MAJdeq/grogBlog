@@ -1,7 +1,7 @@
 import { Resend } from 'resend';
 
 if (!process.env.RESEND_KEY) {
-  console.warn('⚠️ RESEND_KEY is not set. Email notifications will not work.');
+  throw new Error('❌ RESEND_KEY is not set');
 }
 
-export const resend = new Resend(process.env.RESEND_KEY || 'dummy-key');
+export const resend = new Resend(process.env.RESEND_KEY);
