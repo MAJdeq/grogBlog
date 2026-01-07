@@ -3,16 +3,25 @@ import {s3} from "../lib/blob";
 import { PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import * as mediaService from "../services/MediaService";
 import { CreationNotis } from "../emails/emails";
+import jwt from "jsonwebtoken";
 
 
 export const add_media = async (req: Request, res: Response) => {
 
   try {
 
+    const token = req.cookies?.token;
+    
+    if (!token) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
     const { title, content, rating, type } = req.body;
     const file = req.file;
     const ratingNum = Number(rating);
     var bucket = ""
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string };
+    const authorId = decoded.userId;
 
     if (!file) return res.status(400).send("No file uploaded");
 
@@ -34,7 +43,7 @@ export const add_media = async (req: Request, res: Response) => {
 
     const publicUrl = `${process.env.PUBLIC_URL}${bucket}/${file.originalname}`
 
-    const { newMedia } = await mediaService.addMedia(title, content, ratingNum, type, publicUrl)
+    const { newMedia } = await mediaService.addMedia(title, authorId, content, ratingNum, type, publicUrl)
 
     console.log("calling creation notis")
     CreationNotis(`${type} review`, title).catch(err => {

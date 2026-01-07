@@ -1,9 +1,10 @@
 import { prisma } from "../lib/db";
 
-export const addMedia = async (title: string, content: string, rating: number, type: string, bannerUrl: string) => {
+export const addMedia = async (title: string, authorId: string, content: string, rating: number, type: string, bannerUrl: string) => {
   const newMedia = await prisma.mediaReview.create({
     data: {
       title,
+      authorId,
       content,
       type,
       rating,     // number now
