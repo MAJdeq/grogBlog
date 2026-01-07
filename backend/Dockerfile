@@ -33,4 +33,4 @@ COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 # Copy package.json for metadata
 COPY package*.json ./
 
-CMD ["sh", "-c", "npx prisma migrate reset && npx prisma migrate deploy && npm run seed_admin && node build/index.js"]
+CMD ["sh", "-c", "npx prisma migrate deploy && npm run seed_admin && node build/index.js"]
