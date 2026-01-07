@@ -7,7 +7,6 @@ import { CreationNotis } from "../emails/emails";
 
 
 export const add_blog = async (req: Request, res: Response) => {
-  console.log("Add Blog Hit")
   try {
     const token = req.cookies?.token;
     

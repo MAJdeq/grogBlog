@@ -7,17 +7,18 @@ datasource db {
 }
 
 model User {
-  id              String   @id @default(uuid()) // UUID primary key
-  email           String   @unique // login email
+  id              String        @id @default(uuid()) // UUID primary key
+  email           String        @unique // login email
   name            String? // optional name
   password        String // hashed password
-  createdAt       DateTime @default(now())
-  role            Role     @default(USER)
-  updatedAt       DateTime @updatedAt
+  createdAt       DateTime      @default(now())
+  role            Role          @default(USER)
+  updatedAt       DateTime      @updatedAt
   blogs           Blog[]
-  isSubscriber    Boolean  @default(false)
-  subscriberToken String?  @unique
+  isSubscriber    Boolean       @default(false)
+  subscriberToken String?       @unique
   likes           Like[]
+  mediaReviews    MediaReview[]
 }
 
 model Blog {
@@ -38,7 +39,7 @@ model Like {
   itemType  String // "blog" or "media"
   createdAt DateTime @default(now())
 
-  user   User    @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id])
 
   @@unique([userId, itemId, itemType]) // prevent double-likes per user per item
 }
@@ -48,6 +49,8 @@ model MediaReview {
   title     String
   type      String
   content   String
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
   rating    Int
   bannerUrl String
   createdAt DateTime @default(now())

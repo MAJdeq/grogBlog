@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { WordText } from "@/components/ui/shared/WordText";
 import { useEffect } from "react";
+import { Textarea } from "@/components/ui/textarea";
 import { capitalizeFirstLetter } from "@/lib/utils";
 type Media = {
   id: string;
@@ -116,10 +117,7 @@ export const MediaForm = ({ mode = "add", type, media, onSuccess }: MediaFormPro
         required
         />
 
-      <WordText 
-        value={form.watch("content")}
-        onChange={(value) => form.setValue("content", value, { shouldDirty: true })}
-      />
+      <Textarea {...form.register("content")} />
       
       {/* Styled File Upload */}
       <div className="space-y-2">

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { WordText } from "@/components/ui/shared/WordText";
+import { Textarea } from "@/components/ui/textarea";
 import DOMPurify from 'dompurify';
 
 type Blog = {
@@ -96,10 +96,7 @@ export const BlogForm = ({ mode = "add", blog, onSuccess }: BlogFormProps) => {
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full max-w-2xl space-y-4">
         <Input placeholder="Title" {...form.register("title")} required />
         
-        <WordText 
-          value={form.watch("content")}
-          onChange={(value) => form.setValue("content", value, { shouldDirty: true })}
-        />
+        <Textarea {...form.register("content")} />
         
         <div className="space-y-2">
           <label 
