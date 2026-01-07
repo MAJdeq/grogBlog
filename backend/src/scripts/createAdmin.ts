@@ -8,19 +8,22 @@ const name = process.env.ADMIN_NAME!;
 async function main() {
   // Check if admin exists
   const existing = await prisma.user.findUnique({ where: { email } });
+  
   if (existing) {
     console.log(`✅ User exists: ${email}`);
-
-    if (existing.role != "ADMIN"){
+    
+    if (existing.role != "SUPERADMIN") {
       const updateUser = await prisma.user.update({
         where: {
           email: existing.email,
         },
         data: {
-          role: "ADMIN",
+          role: "SUPERADMIN",
         },
-      })
-      console.log(`Updated user: ${updateUser}`)
+      });
+      console.log(`✅ Updated user role to SUPERADMIN:`, updateUser);
+    } else {
+      console.log(`✅ User already has SUPERADMIN role`);
     }
     return;
   }
@@ -33,12 +36,12 @@ async function main() {
     data: {
       email,
       password: hashedPassword,
-      role: "ADMIN",
+      role: "SUPERADMIN",
       name,
     },
   });
-
-  console.log(`✅ Admin created:`, { id: admin.id, email: admin.email });
+  
+  console.log(`✅ Super Admin created:`, { id: admin.id, email: admin.email });
 }
 
 main()

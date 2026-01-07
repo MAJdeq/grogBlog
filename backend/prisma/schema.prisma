@@ -10,6 +10,7 @@ enum Role {
   USER
   ADMIN
   AUTHOR
+  SUPERADMIN
 }
 
 model User {
