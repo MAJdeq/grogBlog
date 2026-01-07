@@ -6,11 +6,17 @@ datasource db {
   provider = "postgresql"
 }
 
+enum Role {
+  USER
+  ADMIN
+  AUTHOR
+}
+
 model User {
-  id              String        @id @default(uuid()) // UUID primary key
-  email           String        @unique // login email
-  name            String? // optional name
-  password        String // hashed password
+  id              String        @id @default(uuid())
+  email           String        @unique
+  name            String?
+  password        String
   createdAt       DateTime      @default(now())
   role            Role          @default(USER)
   updatedAt       DateTime      @updatedAt
@@ -22,12 +28,22 @@ model User {
 }
 
 model Blog {
-  id        String   @id @default(uuid()) // UUID primary key
-  title     String // title
-  content   String // content
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  String
-  bannerUrl String // bannerurl
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  authorId  String?  // ⚠️ MADE OPTIONAL - this is the key change
+  author    User?    @relation(fields: [authorId], references: [id])
+  bannerUrl String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ⚠️ Keep Admin table temporarily for data migration
+model Admin {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -35,13 +51,12 @@ model Blog {
 model Like {
   id        String   @id @default(cuid())
   userId    String
-  itemId    String // ID of the blog OR media
-  itemType  String // "blog" or "media"
+  itemId    String
+  itemType  String
   createdAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id])
-
-  @@unique([userId, itemId, itemType]) // prevent double-likes per user per item
+  user      User     @relation(fields: [userId], references: [id])
+  
+  @@unique([userId, itemId, itemType])
 }
 
 model MediaReview {
@@ -59,18 +74,12 @@ model MediaReview {
 
 model OTP {
   id          String   @id @default(uuid())
-  email       String // Use email instead of userId
+  email       String
   otp_hash    String
-  purpose     String // 'password_reset', 'email_verification', '2fa', etc.
+  purpose     String
   expiresAt   DateTime
   createdAt   DateTime @default(now())
   attempts    Int      @default(0)
   maxAttempts Int      @default(3)
   is_used     Boolean  @default(false)
-}
-
-enum Role {
-  USER
-  ADMIN
-  AUTHOR
 }
