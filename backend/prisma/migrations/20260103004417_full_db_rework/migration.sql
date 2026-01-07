@@ -1,40 +1,34 @@
--- 1. Create enum if it doesn't exist
-DO $$
-BEGIN
-   IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'role') THEN
-      CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN');
-   END IF;
-END
-$$;
+/*
+  Warnings:
 
--- 2. Create User table if not exists
-CREATE TABLE IF NOT EXISTS "User" (
-    "id" TEXT NOT NULL PRIMARY KEY,
-    "email" TEXT NOT NULL UNIQUE,
+  - You are about to drop the `Admin` table. If the table is not empty, all the data it contains will be lost.
+  - Added the required column `authorId` to the `Blog` table without a default value. This is not possible if the table is not empty.
+
+*/
+-- CreateEnum
+CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN');
+
+-- AlterTable
+ALTER TABLE "Blog" ADD COLUMN     "authorId" TEXT NOT NULL;
+
+-- DropTable
+DROP TABLE "Admin";
+
+-- CreateTable
+CREATE TABLE "User" (
+    "id" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
     "name" TEXT,
     "password" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "role" "Role" NOT NULL DEFAULT 'USER',
-    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
 
--- 3. Add authorId column as nullable first
-ALTER TABLE "Blog" ADD COLUMN IF NOT EXISTS "authorId" TEXT;
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
--- 4. Populate authorId for existing rows
-INSERT INTO "User" (id, email, password, role, updatedAt)
-VALUES ('default-user-id','admin@example.com','hashedpassword','ADMIN', NOW())
-ON CONFLICT (id) DO NOTHING;
-
-UPDATE "Blog" SET "authorId" = 'default-user-id';
-
--- 5. Now make authorId NOT NULL
-ALTER TABLE "Blog" ALTER COLUMN "authorId" SET NOT NULL;
-
--- 6. Add foreign key safely
-ALTER TABLE "Blog"
-ADD CONSTRAINT IF NOT EXISTS "Blog_authorId_fkey"
-FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- 7. Drop Admin table safely if exists
-DROP TABLE IF EXISTS "Admin";
+-- AddForeignKey
+ALTER TABLE "Blog" ADD CONSTRAINT "Blog_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
