@@ -74,7 +74,7 @@ export const MediaListPage = ({ type }: MediaListPageProps) => {
                 Open
               </Button>
 
-              {isAdmin && (
+              {(isAdmin || isSuperAdmin) && (
                 <>
                   <Button
                     size="sm"
@@ -101,7 +101,7 @@ export const MediaListPage = ({ type }: MediaListPageProps) => {
         </div>
       ))}
 
-      {isAdmin || isSuperAdmin && (
+      {(isAdmin || isSuperAdmin) && (
         <>
           <div className="flex justify-center">
             <Button onClick={() => setAddOpen(true)}>Add {label}</Button>

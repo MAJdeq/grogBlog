@@ -75,7 +75,6 @@ export const NavLayout = () => {
         setAuthorized(true)
 
         setUser(data.user);
-        console.log(data.user.role)
         if (data.user.role === "SUPERADMIN") {
           setSuperAdmin(true);
         } else if (data.user.role === "ADMIN") {

@@ -131,7 +131,7 @@ export const MediaDetailPage = ({ type }: MediaDetailPageProps) => {
               
             </div>
 
-            <div className="prose max-w-none">
+            <div className="markdown">
               <Markdown>{media.content}</Markdown>
             </div>
           </div>

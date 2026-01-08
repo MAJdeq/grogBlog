@@ -46,8 +46,8 @@ export const updateRole = async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Prevent changing ADMIN or SUPERADMIN roles
-    if (targetUser.role === 'ADMIN' || targetUser.role === 'SUPERADMIN') {
+
+    if (targetUser.role === 'SUPERADMIN') {
       return res.status(403).json({ 
         error: 'Cannot modify admin or super admin roles' 
       });

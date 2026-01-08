@@ -187,12 +187,12 @@ export const Dashboard = () => {
                     <DropdownMenu>
                       <DropdownMenuTrigger 
                         asChild 
-                        disabled={user.role === 'SUPERADMIN' || user.role === 'ADMIN'}
+                        disabled={user.role === 'SUPERADMIN'}
                       >
                         <Button 
                           variant="ghost" 
                           size="sm"
-                          disabled={user.role === 'SUPERADMIN' || user.role === 'ADMIN'}
+                          disabled={user.role === 'SUPERADMIN'}
                         >
                           <MoreVertical className="h-4 w-4" />
                         </Button>

@@ -69,7 +69,9 @@ export const BlogIdPage = () => {
                 {blog.title}
               </h1>
 
-              <Markdown>{blog.content}</Markdown>
+              <div className="markdown">
+                <Markdown>{blog.content}</Markdown>
+              </div>
             </div>
           </div>
         </div>
